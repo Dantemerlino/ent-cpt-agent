@@ -39,7 +39,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Initialize default configuration
-python main.py init
+python -m src.main init
 ```
 
 For detailed installation instructions, see the [Installation Guide](docs/installation.md).
@@ -49,7 +49,7 @@ For detailed installation instructions, see the [Installation Guide](docs/instal
 ### Interactive Mode
 
 ```bash
-python main.py interactive
+python -m src.main interactive
 ```
 
 This starts an interactive session where you can ask questions about ENT procedures and CPT codes.
@@ -57,7 +57,7 @@ This starts an interactive session where you can ask questions about ENT procedu
 ### API Server Mode
 
 ```bash
-python main.py server --host localhost --port 8000
+python -m src.main server --host localhost --port 8000
 ```
 
 This starts the API server, allowing you to integrate the agent with other applications.
@@ -65,7 +65,7 @@ This starts the API server, allowing you to integrate the agent with other appli
 ### Web UI
 
 ```bash
-python web_ui.py
+python -m src.web.web_ui
 ```
 
 This starts the web interface server. Navigate to http://localhost:5000 to access the web UI.
@@ -73,7 +73,7 @@ This starts the web interface server. Navigate to http://localhost:5000 to acces
 ### Single Query Mode
 
 ```bash
-python main.py query "What is the CPT code for bilateral myringotomy with tube insertion?"
+python -m src.main query "What is the CPT code for bilateral myringotomy with tube insertion?"
 ```
 
 This processes a single query and exits, useful for scripts and automation.
