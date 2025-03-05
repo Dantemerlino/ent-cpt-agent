@@ -1,0 +1,56 @@
+flowchart TB
+    subgraph User["User Interaction"]
+        CLI["Command Line Interface"]
+        API["API/Web Interface"]
+    end
+
+    subgraph Config["Configuration Layer"]
+        AG_CONFIG["Agent Config"]
+        AG_CONFIG --> LOGGING["Logging System"]
+    end
+
+    subgraph Core["Core Agent Components"]
+        ENT_AGENT["ENT CPT Agent"]
+        CONV_MGR["Conversation Manager"]
+        CPT_DB["CPT Code Database"]
+        RULES["Rules Engine"]
+    end
+
+    subgraph AI["AI Engine"]
+        LM_STUDIO["LM Studio Engine"]
+        TOOLS["Tool Functions"]
+    end
+
+    subgraph Storage["Persistence Layer"]
+        CONV_STORE["Conversation Storage"]
+        CPT_DATA["CPT Code Data (Excel)"]
+    end
+
+    %% Connections
+    CLI --> ENT_AGENT
+    API --> ENT_AGENT
+    
+    AG_CONFIG --> ENT_AGENT
+    
+    ENT_AGENT --> CONV_MGR
+    ENT_AGENT --> CPT_DB
+    ENT_AGENT --> RULES
+    ENT_AGENT --> LM_STUDIO
+    
+    CONV_MGR <--> CONV_STORE
+    CPT_DB <--> CPT_DATA
+    
+    LM_STUDIO --> TOOLS
+    TOOLS --> CPT_DB
+    TOOLS --> RULES
+    
+    %% Styling
+    classDef primary fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef secondary fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef tertiary fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef data fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
+    
+    class ENT_AGENT,CONV_MGR primary
+    class CPT_DB,RULES secondary
+    class LM_STUDIO,TOOLS tertiary
+    class CONV_STORE,CPT_DATA,AG_CONFIG data

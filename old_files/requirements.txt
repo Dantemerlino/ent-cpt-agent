@@ -1,0 +1,10 @@
+lmstudio
+pandas
+openpyxl
+flask
+fastapi
+uvicorn
+requests
+python-dotenv
+logging
+argparse

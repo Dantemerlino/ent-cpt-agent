@@ -1,0 +1,22 @@
+{
+    "model": {
+      "name": "qwen2.5-7b-instruct",
+      "temperature": 0.2,
+      "max_tokens": 1024,
+      "context_length": 8192
+    },
+    "cpt_database": {
+      "file_path": "CPT codes for ENT.xlsx",
+      "sheet_name": "Sheet1"
+    },
+    "agent": {
+      "log_level": "INFO",
+      "save_conversations": true,
+      "conversation_dir": "conversations"
+    },
+    "server": {
+      "host": "localhost",
+      "port": 8000,
+      "enable_api": false
+    }
+  }
