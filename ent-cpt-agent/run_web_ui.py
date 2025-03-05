@@ -6,6 +6,8 @@ This script starts the web interface server for the ENT CPT Code Agent.
 
 import os
 import logging
+from flask import Flask
+from src.web.templates import app  # Import the Flask app or define it here
 
 # Configure logging
 logging.basicConfig(
@@ -14,6 +16,9 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger("ent_cpt_agent_web_ui")
+
+# If app is not imported, define it here
+# app = Flask(__name__, template_folder='src/web/templates')
 
 if __name__ == "__main__":
     try:

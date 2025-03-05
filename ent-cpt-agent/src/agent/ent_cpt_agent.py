@@ -8,6 +8,10 @@ import logging
 import json
 from pathlib import Path
 
+# Import needed components
+from .cpt_database import CPTCodeDatabase
+from .rules_engine import RulesEngine
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

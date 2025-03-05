@@ -65,7 +65,7 @@ This starts the API server, allowing you to integrate the agent with other appli
 ### Web UI
 
 ```bash
-python -m src.web.web_ui
+python run_web_ui.py
 ```
 
 This starts the web interface server. Navigate to http://localhost:5000 to access the web UI.
