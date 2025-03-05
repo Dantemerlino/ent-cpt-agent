@@ -42,7 +42,7 @@ pip install -r requirements.txt
 python -m src.main init
 ```
 
-For detailed installation instructions, see the [Installation Guide](docs/installation.md).
+For detailed installation instructions, see the [Installation Guide](docs/installation_guide.md).
 
 ## Usage
 

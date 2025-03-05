@@ -1,2 +1,10 @@
-old_files
-venv
+old_files/
+venv/
+__pycache__/
+*.py[cod]
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
