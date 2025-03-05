@@ -28,7 +28,7 @@ The ENT CPT Code Agent is a comprehensive tool designed to help medical professi
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-organization/ent-cpt-agent.git
+git clone https://github.com/Dantemerlino/ent-cpt-agent.git
 cd ent-cpt-agent
 
 # Create a virtual environment
