@@ -80,9 +80,10 @@ This processes a single query and exits, useful for scripts and automation.
 
 ## Documentation
 
-- [Installation Guide](docs/installation.md): Detailed installation instructions
+- [Installation Guide](docs/installation_guide.md): Detailed installation instructions
 - [Usage Examples](docs/usage_examples.md): Examples of how to use the agent
 - [API Documentation](docs/api_docs.md): Documentation for the REST API
+- [Project summary](docs/PROJECT_SUMMARY.md): Project summary
 
 ## License
 
