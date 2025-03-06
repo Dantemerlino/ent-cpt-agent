@@ -1,3 +1,7 @@
+"""
+Configuration manager for the ENT CPT Code Agent.
+"""
+
 import json
 import os
 from typing import Dict, Any, Optional
@@ -30,7 +34,9 @@ class AgentConfig:
         "server": {
             "host": "localhost",
             "port": 8000,
-            "enable_api": False
+            "enable_api": False,
+            "lm_studio_base_url": "http://localhost:1234/v1",
+            "lm_studio_api_key": "lm-studio"
         }
     }
     

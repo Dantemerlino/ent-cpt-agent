@@ -1,154 +1,21 @@
+"""
+Main module for the ENT CPT Agent.
+Contains the ENTCPTAgent class for processing ENT procedure queries.
+"""
+
 import os
-import pandas as pd
-import re
-import lmstudio as lms
-from typing import List, Dict, Any, Optional, Tuple
-import argparse
 import logging
 import json
-from pathlib import Path
-
-# Import needed components
-from .cpt_database import CPTCodeDatabase
-from .rules_engine import RulesEngine
+import re
+import lmstudio as lms
+from typing import List, Dict, Any, Optional
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler()]
-)
 logger = logging.getLogger("ent_cpt_agent")
 
-class CPTCodeDatabase:
-    """
-    Handles loading, processing, and querying of CPT codes for ENT procedures.
-    """
-    def __init__(self, file_path: str):
-        """
-        Initialize the CPT code database from the provided Excel file.
-        
-        Args:
-            file_path: Path to the Excel file containing CPT codes
-        """
-        self.file_path = file_path
-        self.df = None
-        self.code_descriptions = {}
-        self.code_categories = {}
-        self.related_codes = {}
-        self.load_data()
-    
-    def load_data(self) -> None:
-        """Load CPT code data from Excel file and process it."""
-        logger.info(f"Loading CPT codes from {self.file_path}")
-        try:
-            self.df = pd.read_excel(self.file_path)
-            
-            # Process the dataframe to create lookup dictionaries
-            for _, row in self.df.iterrows():
-                code = str(row.get('CPT Code', '')).strip()
-                if code and not pd.isna(code):
-                    # Store description
-                    self.code_descriptions[code] = row.get('Description', '')
-                    
-                    # Store category
-                    category = row.get('Category', '')
-                    if category and not pd.isna(category):
-                        if category not in self.code_categories:
-                            self.code_categories[category] = []
-                        self.code_categories[category].append(code)
-                    
-                    # Store related codes
-                    related = row.get('Related Codes', '')
-                    if related and not pd.isna(related):
-                        related_codes = [r.strip() for r in str(related).split(',')]
-                        self.related_codes[code] = related_codes
-            
-            logger.info(f"Loaded {len(self.code_descriptions)} CPT codes")
-        except Exception as e:
-            logger.error(f"Error loading CPT codes: {e}")
-            raise
-    
-    def search_codes(self, query: str) -> List[Dict[str, Any]]:
-        """
-        Search for CPT codes based on a text query.
-        
-        Args:
-            query: Search terms for finding relevant CPT codes
-            
-        Returns:
-            List of matching CPT codes with descriptions
-        """
-        query = query.lower()
-        results = []
-        
-        for code, description in self.code_descriptions.items():
-            if query in description.lower() or query in code:
-                results.append({
-                    "code": code,
-                    "description": description,
-                    "related_codes": self.related_codes.get(code, [])
-                })
-        
-        return results
-    
-    def get_code_details(self, code: str) -> Dict[str, Any]:
-        """
-        Get detailed information about a specific CPT code.
-        
-        Args:
-            code: The CPT code to look up
-            
-        Returns:
-            Dictionary containing detailed information about the code
-        """
-        if code not in self.code_descriptions:
-            return {"error": f"CPT code {code} not found"}
-        
-        return {
-            "code": code,
-            "description": self.code_descriptions.get(code, ""),
-            "related_codes": self.related_codes.get(code, [])
-        }
-    
-    def get_codes_by_category(self, category: str) -> List[Dict[str, Any]]:
-        """
-        Get all CPT codes belonging to a specific category.
-        
-        Args:
-            category: The category to look up codes for
-            
-        Returns:
-            List of CPT codes in the specified category
-        """
-        if category not in self.code_categories:
-            return []
-        
-        results = []
-        for code in self.code_categories[category]:
-            results.append({
-                "code": code,
-                "description": self.code_descriptions.get(code, ""),
-                "related_codes": self.related_codes.get(code, [])
-            })
-        
-        return results
-    
-    def get_code_validation(self, code: str) -> Dict[str, Any]:
-        """
-        Validate if a CPT code exists and is valid.
-        
-        Args:
-            code: The CPT code to validate
-            
-        Returns:
-            Dictionary with validation results
-        """
-        if code in self.code_descriptions:
-            return {"valid": True, "description": self.code_descriptions[code]}
-        else:
-            return {"valid": False, "error": f"Invalid CPT code: {code}"}
-
+# Import required components
+from src.agent.cpt_database import CPTCodeDatabase
+from src.agent.rules_engine import RulesEngine
 
 class ENTCPTAgent:
     """
@@ -159,27 +26,42 @@ class ENTCPTAgent:
         Initialize the ENT CPT Agent.
         
         Args:
-            config: AgentConfig object with configuration settings
+            config: Configuration object or path to config file
             conversation_manager: Optional ConversationManager instance
         """
-        self.config = config
+        logger.info(f"Initializing ENTCPTAgent with config type: {type(config)}")
         
+        # Handle string config path
+        if isinstance(config, str):
+            from src.config.agent_config import AgentConfig
+            logger.info(f"Loading config from path: {config}")
+            self.config = AgentConfig(config)
+        else:
+            # Config is already an object
+            self.config = config
+            
         # Get configuration values
-        self.model_name = config.get("model", "name")
-        self.model_temperature = config.get("model", "temperature")
-        self.model_max_tokens = config.get("model", "max_tokens")
-        self.cpt_db_path = config.get("cpt_database", "file_path")
+        self.model_name = self.config.get("model", "name")
+        self.model_temperature = self.config.get("model", "temperature")
+        self.model_max_tokens = self.config.get("model", "max_tokens")
+        self.cpt_db_path = self.config.get("cpt_database", "file_path")
         
-        # Initialize components
+        logger.info(f"Using CPT database path: {self.cpt_db_path}")
+        logger.info(f"Using model: {self.model_name}")
+        
+        # Initialize components (order matters!)
+        self.system_prompt = None  # Initialize first to avoid reference issues
+        self.model = None
+        
+        # Import and initialize database and rules engine
         self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
         self.rules_engine = RulesEngine()
-        self.conversation_manager = conversation_manager or ConversationManager(
-            config.get("agent", "conversation_dir")
-        )
+        self.conversation_manager = conversation_manager
+        
+        # Set system prompt
+        self.system_prompt = self._create_system_prompt()
         
         # Initialize LM Studio model
-        self.model = None
-        self.system_prompt = self._create_system_prompt()
         self.initialize_model()
     
     def _create_system_prompt(self) -> str:
@@ -223,7 +105,7 @@ class ENTCPTAgent:
             logger.info("Model initialized successfully")
         except Exception as e:
             logger.error(f"Error initializing model: {e}")
-            raise
+            # Continue without raising - the agent will handle missing model gracefully
     
     def search_cpt_codes(self, query: str) -> str:
         """
@@ -355,7 +237,8 @@ class ENTCPTAgent:
         if analysis["explanations"]:
             response += "\nRecommendation details:\n"
             for explanation in analysis["explanations"]:
-                response += f"- {explanation['message']}\n"
+                if "message" in explanation:
+                    response += f"- {explanation['message']}\n"
         
         # Add excluded codes if any
         if analysis["excluded_codes"]:
@@ -380,13 +263,28 @@ class ENTCPTAgent:
         """
         logger.info(f"Processing query: {query}")
         
+        # Check if model is initialized
+        if self.model is None:
+            return "Model not initialized. Please check the model configuration."
+        
         # Use provided conversation or create a temporary one
         if conversation is None:
             chat = lms.Chat(self.system_prompt)
             chat.add_user_message(query)
         else:
             # Convert existing conversation to LM Studio chat
-            chat = conversation.to_lmstudio_chat(self.system_prompt)
+            chat = lms.Chat(self.system_prompt)
+            
+            # Add message history from conversation object if available
+            if hasattr(conversation, 'messages'):
+                for msg in conversation.messages:
+                    if msg["role"] == "user":
+                        chat.add_user_message(msg["content"])
+                    elif msg["role"] == "assistant":
+                        chat.add_assistant_message(msg["content"])
+            
+            # Add the current query
+            chat.add_user_message(query)
         
         # Define the tool functions
         tools = [
@@ -397,103 +295,57 @@ class ENTCPTAgent:
             self.analyze_procedure
         ]
         
-        # Let the model use tools to process the query
-        result = self.model.act(
-            chat,
-            tools,
-            on_message=lambda msg: conversation.add_message("assistant", msg.content) if conversation else None
-        )
-        
-        return result.content
+        try:
+            # Basic message callback to add response to conversation
+            def on_message(msg):
+                content = str(msg)  # Convert message to string regardless of structure
+                if conversation and hasattr(conversation, 'add_message'):
+                    conversation.add_message("assistant", content)
+                return content
+            
+            # Let the model use tools to process the query
+            result = self.model.act(
+                chat,
+                tools,
+                on_message=on_message
+            )
+            
+            # Handle different result structures
+            response = ""
+            if hasattr(result, 'content'):
+                response = result.content
+            elif hasattr(result, 'response'):
+                response = result.response
+            elif hasattr(result, 'output'):
+                response = result.output
+            elif hasattr(result, 'result'):
+                if isinstance(result.result, str):
+                    response = result.result
+                elif hasattr(result.result, 'content'):
+                    response = result.result.content
+                elif hasattr(result.result, 'message'):
+                    response = result.result.message
+            else:
+                # As a fallback, convert the whole result to string
+                response = str(result)
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error during model.act(): {e}", exc_info=True)
+            return f"I encountered an error while processing your query: {str(e)}"
     
-    def run_interactive_session(self) -> None:
-        """Run an interactive session where the user can ask questions about CPT codes."""
-        print("\nENT CPT Code Assistant")
-        print("=" * 50)
-        print("Ask questions about ENT procedures and CPT codes.")
-        print("Type 'quit' or 'exit' to end the session.")
-        print("Type 'new' to start a new conversation.")
-        print("=" * 50)
+    def extract_cpt_codes(self, text: str) -> List[str]:
+        """
+        Extract CPT codes from text.
         
-        # Create initial conversation
-        conversation = self.conversation_manager.create_conversation()
-        print(f"\nSession ID: {conversation.session_id}\n")
-        
-        while True:
-            query = input("\nQuestion: ")
+        Args:
+            text: Text to extract CPT codes from
             
-            # Handle special commands
-            if query.lower() in ['quit', 'exit']:
-                # Save conversation before exiting
-                self.conversation_manager.save_conversation(conversation)
-                print("Conversation saved. Goodbye!")
-                break
-            
-            elif query.lower() == 'new':
-                # Save current conversation and create a new one
-                self.conversation_manager.save_conversation(conversation)
-                conversation = self.conversation_manager.create_conversation()
-                print(f"\nStarted new conversation. Session ID: {conversation.session_id}\n")
-                continue
-            
-            # Add user message to conversation
-            conversation.add_message("user", query)
-            
-            # Process query
-            response = self.process_query(query, conversation)
-            
-            # Extract CPT codes from response
-            codes = self.conversation_manager.extract_cpt_codes(response)
-            if codes:
-                # Update the last assistant message with found codes
-                if conversation.messages and conversation.messages[-1]["role"] == "assistant":
-                    conversation.messages[-1]["codes"] = codes
-            
-            # Save conversation after each interaction
-            self.conversation_manager.save_conversation(conversation)
-            
-            # Display response
-            print("\nResponse:")
-            print(response)
-            
-            # Display found CPT codes separately
-            if codes:
-                print("\nCPT Codes found:")
-                for code in codes:
-                    description = ""
-                    code_info = self.cpt_db.get_code_details(code)
-                    if "error" not in code_info:
-                        description = code_info.get("description", "")
-                    print(f"- {code}: {description}")
-            
-            print("-" * 50)
-
-
-def main():
-    """Main entry point for the ENT CPT Code Agent."""
-    parser = argparse.ArgumentParser(description="ENT CPT Code Agent")
-    parser.add_argument(
-        "--cpt_db", 
-        type=str, 
-        default="CPT codes for ENT.xlsx",
-        help="Path to the CPT code database Excel file"
-    )
-    parser.add_argument(
-        "--model", 
-        type=str, 
-        default="qwen2.5-7b-instruct",
-        help="Name of the LM Studio model to use"
-    )
-    args = parser.parse_args()
-    
-    try:
-        agent = ENTCPTAgent(args.cpt_db, args.model)
-        agent.run_interactive_session()
-    except KeyboardInterrupt:
-        print("\nSession terminated by user.")
-    except Exception as e:
-        logger.error(f"Error running ENT CPT Agent: {e}")
-
-
-if __name__ == "__main__":
-    main()
+        Returns:
+            List of extracted CPT codes
+        """
+        # Pattern for CPT codes (5 digits, optionally followed by modifiers)
+        pattern = r'\b\d{5}(?:-\d{1,2})?\b'
+        matches = re.findall(pattern, text)
+        return matches

@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Web UI server for the ENT CPT Code Agent.
+Script to run the web UI for ENT CPT Code Agent.
 This script starts the web interface server for the ENT CPT Code Agent.
 """
 
 import os
 import logging
-from flask import Flask
-from src.web.templates import app  # Import the Flask app or define it here
+from src.web.templates.app import app
 
 # Configure logging
 logging.basicConfig(
@@ -16,9 +15,6 @@ logging.basicConfig(
     handlers=[logging.StreamHandler()]
 )
 logger = logging.getLogger("ent_cpt_agent_web_ui")
-
-# If app is not imported, define it here
-# app = Flask(__name__, template_folder='src/web/templates')
 
 if __name__ == "__main__":
     try:
