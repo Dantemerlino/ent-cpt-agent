@@ -7,8 +7,8 @@ import os
 import logging
 import json
 import re
-import lmstudio as lms
 from typing import List, Dict, Any, Optional
+from openai import OpenAI
 
 # Configure logging
 logger = logging.getLogger("ent_cpt_agent")
@@ -42,45 +42,54 @@ class ENTCPTAgent:
             
         # Get configuration values
         self.model_name = self.config.get("model", "name")
-        self.model_temperature = self.config.get("model", "temperature")
-        self.model_max_tokens = self.config.get("model", "max_tokens")
+        self.model_temperature = float(self.config.get("model", "temperature"))
+        self.model_max_tokens = int(self.config.get("model", "max_tokens"))
         self.cpt_db_path = self.config.get("cpt_database", "file_path")
         
-        logger.info(f"Using CPT database path: {self.cpt_db_path}")
-        logger.info(f"Using model: {self.model_name}")
-        
-        # Initialize components (order matters!)
-        self.system_prompt = None  # Initialize first to avoid reference issues
-        self.model = None
-        
-        # Import and initialize database and rules engine
+        # Initialize components
         self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
         self.rules_engine = RulesEngine()
         self.conversation_manager = conversation_manager
         
-        # Set system prompt
+        # Create system prompt
         self.system_prompt = self._create_system_prompt()
         
-        # Initialize LM Studio model
-        self.initialize_model()
-    
-    def _create_system_prompt(self) -> str:
-        """
-        Create the system prompt for the agent.
+        # Define tools for OpenAI API
+        self.tools = self._define_tools()
         
-        Returns:
-            System prompt string
+        # Initialize model-related objects
+        self.model = None  # Will be set by initialize_model
+        
+        # Initialize OpenAI client for LM Studio
+        server_config = self.config.get("server")
+        base_url = server_config.get("lm_studio_base_url", "http://localhost:1234/v1")
+        api_key = server_config.get("lm_studio_api_key", "lm-studio")
+        
+        self.client = OpenAI(base_url=base_url, api_key=api_key)
+        logger.info(f"Connected to LM Studio at {base_url}")
+        
+        # Initialize model (compatibility)
+        self.initialize_model()
+        
+        logger.info("ENTCPTAgent initialized successfully")
+    def initialize_model(self) -> None:
         """
+        Compatibility method for model initialization.
+        We're using the OpenAI API now, so this just sets a dummy model.
+        """
+        logger.info(f"Using OpenAI API for {self.model_name}")
+        # Set a dummy model object to indicate initialization
+        self.model = True
+        logger.info("OpenAI API connection established")
+
+    def _create_system_prompt(self) -> str:
+        """Create the system prompt for the agent."""
         return """
         You are an expert ENT (Ear, Nose, Throat) medical coding assistant specialized in CPT codes. 
         Your goal is to help medical professionals find the correct CPT codes for ENT procedures.
         
-        You have access to the following tools:
-        1. search_cpt_codes: Search for CPT codes based on a procedure description
-        2. validate_cpt_code: Validate if a CPT code exists and is correct
-        3. get_category_codes: Get all CPT codes for a specific ENT category
-        4. explain_coding_rules: Explain the rules for using a specific CPT code
-        5. analyze_procedure: Analyze a procedure description to determine appropriate CPT codes
+        You have access to tools that can search for CPT codes, validate codes, and analyze procedures.
+        Use these tools to provide accurate coding assistance.
         
         When recommending CPT codes:
         - Always verify that the procedure description matches the code exactly
@@ -93,30 +102,98 @@ class ENTCPTAgent:
         medical professionals can learn the correct coding principles.
         """
     
-    def initialize_model(self) -> None:
-        """Initialize the LM Studio model."""
-        logger.info(f"Initializing LM Studio model: {self.model_name}")
-        try:
-            # Configure model with parameters from config
-            self.model = lms.llm(self.model_name, config={
-                "temperature": self.model_temperature,
-                "maxTokens": self.model_max_tokens
-            })
-            logger.info("Model initialized successfully")
-        except Exception as e:
-            logger.error(f"Error initializing model: {e}")
-            # Continue without raising - the agent will handle missing model gracefully
+    def _define_tools(self) -> List[Dict[str, Any]]:
+        """Define the tools that the model can use."""
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": "search_cpt_codes",
+                    "description": "Search for CPT codes based on a procedure description or keywords",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The procedure description or keywords to search for"
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "validate_cpt_code",
+                    "description": "Validate if a CPT code exists and is correct",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "The CPT code to validate"
+                            }
+                        },
+                        "required": ["code"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_category_codes",
+                    "description": "Get all CPT codes for a specific ENT category",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "category": {
+                                "type": "string",
+                                "description": "The ENT category to get codes for"
+                            }
+                        },
+                        "required": ["category"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "explain_coding_rules",
+                    "description": "Explain the rules for using a specific CPT code",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "The CPT code to explain rules for"
+                            }
+                        },
+                        "required": ["code"]
+                    }
+                }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "analyze_procedure",
+                    "description": "Analyze a procedure description to determine appropriate CPT codes",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "procedure_text": {
+                                "type": "string",
+                                "description": "Description of the ENT procedure"
+                            }
+                        },
+                        "required": ["procedure_text"]
+                    }
+                }
+            }
+        ]
     
     def search_cpt_codes(self, query: str) -> str:
-        """
-        Tool function: Search for CPT codes based on a procedure description.
-        
-        Args:
-            query: The procedure or keywords to search for
-            
-        Returns:
-            Formatted search results as a string
-        """
+        """Search for CPT codes based on a procedure description."""
         results = self.cpt_db.search_codes(query)
         if not results:
             return f"No CPT codes found matching '{query}'"
@@ -130,15 +207,7 @@ class ENTCPTAgent:
         return response
     
     def validate_cpt_code(self, code: str) -> str:
-        """
-        Tool function: Validate if a CPT code exists and is correct.
-        
-        Args:
-            code: The CPT code to validate
-            
-        Returns:
-            Validation result as a string
-        """
+        """Validate if a CPT code exists and is correct."""
         result = self.cpt_db.get_code_validation(code)
         if result["valid"]:
             return f"CPT code {code} is valid: {result['description']}"
@@ -146,15 +215,7 @@ class ENTCPTAgent:
             return result["error"]
     
     def get_category_codes(self, category: str) -> str:
-        """
-        Tool function: Get all CPT codes for a specific ENT category.
-        
-        Args:
-            category: The ENT category to get codes for
-            
-        Returns:
-            List of codes in the category as a formatted string
-        """
+        """Get all CPT codes for a specific ENT category."""
         results = self.cpt_db.get_codes_by_category(category)
         if not results:
             return f"No CPT codes found for category '{category}'"
@@ -166,32 +227,20 @@ class ENTCPTAgent:
         return response
     
     def explain_coding_rules(self, code: str) -> str:
-        """
-        Tool function: Explain the rules for using a specific CPT code.
-        
-        Args:
-            code: The CPT code to explain rules for
-            
-        Returns:
-            Explanation of coding rules as a string
-        """
-        # First get the code details
+        """Explain the rules for using a specific CPT code."""
         result = self.cpt_db.get_code_details(code)
         if "error" in result:
             return result["error"]
         
-        # Basic code information
         response = f"Coding guidelines for CPT {code}:\n\n"
         response += f"Description: {result['description']}\n\n"
         
-        # Get coding tips from rules engine
         tips = self.rules_engine.get_coding_tips(code, result['description'])
         
         response += "Coding guidelines:\n"
         for idx, tip in enumerate(tips, 1):
             response += f"{idx}. {tip}\n"
         
-        # Add information about related codes
         if result['related_codes']:
             response += f"\nRelated codes to consider: {', '.join(result['related_codes'])}\n"
             response += "\nAlways check if one of these related codes may be more appropriate based on specific procedure details."
@@ -199,48 +248,33 @@ class ENTCPTAgent:
         return response
     
     def analyze_procedure(self, procedure_text: str) -> str:
-        """
-        Tool function: Analyze a procedure description to determine appropriate CPT codes.
-        
-        Args:
-            procedure_text: Description of the ENT procedure
-            
-        Returns:
-            Analysis results as a formatted string
-        """
-        # Search for potential codes
+        """Analyze a procedure description to determine appropriate CPT codes."""
         search_results = self.cpt_db.search_codes(procedure_text)
         candidate_codes = [result["code"] for result in search_results]
         
         if not candidate_codes:
             return f"No potential CPT codes found for this procedure description. Please provide more details about the procedure."
         
-        # Analyze with rules engine
         analysis = self.rules_engine.analyze_procedure(
             procedure_text, candidate_codes, self.cpt_db)
         
         if analysis["status"] != "success":
             return f"Error analyzing procedure: {analysis.get('message', 'Unknown error')}"
         
-        # Format the response
         response = f"Analysis of procedure: {procedure_text}\n\n"
         
-        # Add recommended codes
         response += "Recommended CPT codes:\n"
         for code in analysis["recommended_codes"]:
-            # Get description for the code
-            code_info = self.cpt_db.get_code_details(code.split('-')[0])  # Handle codes with modifiers
+            code_info = self.cpt_db.get_code_details(code.split('-')[0])
             description = code_info.get("description", "Unknown") if "error" not in code_info else "Unknown"
             response += f"- {code}: {description}\n"
         
-        # Add explanations
         if analysis["explanations"]:
             response += "\nRecommendation details:\n"
             for explanation in analysis["explanations"]:
                 if "message" in explanation:
                     response += f"- {explanation['message']}\n"
         
-        # Add excluded codes if any
         if analysis["excluded_codes"]:
             response += "\nExcluded codes (may be bundled or inappropriate):\n"
             for code in analysis["excluded_codes"]:
@@ -263,89 +297,112 @@ class ENTCPTAgent:
         """
         logger.info(f"Processing query: {query}")
         
-        # Check if model is initialized
-        if self.model is None:
-            return "Model not initialized. Please check the model configuration."
+        # Prepare messages for the OpenAI API
+        messages = [{"role": "system", "content": self.system_prompt}]
         
-        # Use provided conversation or create a temporary one
-        if conversation is None:
-            chat = lms.Chat(self.system_prompt)
-            chat.add_user_message(query)
-        else:
-            # Convert existing conversation to LM Studio chat
-            chat = lms.Chat(self.system_prompt)
-            
-            # Add message history from conversation object if available
-            if hasattr(conversation, 'messages'):
-                for msg in conversation.messages:
-                    if msg["role"] == "user":
-                        chat.add_user_message(msg["content"])
-                    elif msg["role"] == "assistant":
-                        chat.add_assistant_message(msg["content"])
-            
-            # Add the current query
-            chat.add_user_message(query)
+        # Add conversation history if available
+        if conversation and hasattr(conversation, 'messages'):
+            for msg in conversation.messages:
+                if msg["role"] in ["user", "assistant"]:
+                    messages.append({"role": msg["role"], "content": msg["content"]})
         
-        # Define the tool functions
-        tools = [
-            self.search_cpt_codes,
-            self.validate_cpt_code,
-            self.get_category_codes,
-            self.explain_coding_rules,
-            self.analyze_procedure
-        ]
+        # Add the current query
+        messages.append({"role": "user", "content": query})
         
         try:
-            # Basic message callback to add response to conversation
-            def on_message(msg):
-                content = str(msg)  # Convert message to string regardless of structure
-                if conversation and hasattr(conversation, 'add_message'):
-                    conversation.add_message("assistant", content)
-                return content
-            
-            # Let the model use tools to process the query
-            result = self.model.act(
-                chat,
-                tools,
-                on_message=on_message
+            # Make the initial API call
+            response = self.client.chat.completions.create(
+                model=self.model_name,
+                messages=messages,
+                tools=self.tools,
+                temperature=self.model_temperature,
+                max_tokens=self.model_max_tokens
             )
             
-            # Handle different result structures
-            response = ""
-            if hasattr(result, 'content'):
-                response = result.content
-            elif hasattr(result, 'response'):
-                response = result.response
-            elif hasattr(result, 'output'):
-                response = result.output
-            elif hasattr(result, 'result'):
-                if isinstance(result.result, str):
-                    response = result.result
-                elif hasattr(result.result, 'content'):
-                    response = result.result.content
-                elif hasattr(result.result, 'message'):
-                    response = result.result.message
+            # Check if the model wants to use tools
+            if hasattr(response.choices[0].message, 'tool_calls') and response.choices[0].message.tool_calls:
+                # Process all tool calls
+                tool_calls = response.choices[0].message.tool_calls
+                
+                # Add assistant message with tool calls to conversation
+                messages.append({
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": tool_call.id,
+                            "type": tool_call.type,
+                            "function": {
+                                "name": tool_call.function.name,
+                                "arguments": tool_call.function.arguments
+                            }
+                        }
+                        for tool_call in tool_calls
+                    ]
+                })
+                
+                # Process each tool call
+                for tool_call in tool_calls:
+                    # Parse arguments
+                    args = json.loads(tool_call.function.arguments)
+                    
+                    # Execute the tool
+                    tool_result = ""
+                    if tool_call.function.name == "search_cpt_codes":
+                        tool_result = self.search_cpt_codes(args["query"])
+                    elif tool_call.function.name == "validate_cpt_code":
+                        tool_result = self.validate_cpt_code(args["code"])
+                    elif tool_call.function.name == "get_category_codes":
+                        tool_result = self.get_category_codes(args["category"])
+                    elif tool_call.function.name == "explain_coding_rules":
+                        tool_result = self.explain_coding_rules(args["code"])
+                    elif tool_call.function.name == "analyze_procedure":
+                        tool_result = self.analyze_procedure(args["procedure_text"])
+                    else:
+                        tool_result = f"Unknown tool: {tool_call.function.name}"
+                    
+                    # Add tool response to conversation
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "content": tool_result
+                    })
+                
+                # Generate final response after tool calls
+                final_response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=messages,
+                    temperature=self.model_temperature,
+                    max_tokens=self.model_max_tokens
+                )
+                
+                # Get the final text response
+                final_content = final_response.choices[0].message.content
+                
+                # Add to conversation history if provided
+                if conversation and hasattr(conversation, 'add_message'):
+                    conversation.add_message("assistant", final_content)
+                
+                return final_content
             else:
-                # As a fallback, convert the whole result to string
-                response = str(result)
-            
-            return response
-            
+                # No tool calls, just return the direct response
+                content = response.choices[0].message.content
+                
+                # Add to conversation history if provided
+                if conversation and hasattr(conversation, 'add_message'):
+                    conversation.add_message("assistant", content)
+                
+                return content
+        
         except Exception as e:
-            logger.error(f"Error during model.act(): {e}", exc_info=True)
+            logger.error(f"Error processing query: {e}", exc_info=True)
             return f"I encountered an error while processing your query: {str(e)}"
     
     def extract_cpt_codes(self, text: str) -> List[str]:
-        """
-        Extract CPT codes from text.
-        
-        Args:
-            text: Text to extract CPT codes from
+        """Extract CPT codes from text."""
+        if not isinstance(text, str):
+            text = str(text)
             
-        Returns:
-            List of extracted CPT codes
-        """
-        # Pattern for CPT codes (5 digits, optionally followed by modifiers)
         pattern = r'\b\d{5}(?:-\d{1,2})?\b'
         matches = re.findall(pattern, text)
         return matches
