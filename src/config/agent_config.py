@@ -17,8 +17,8 @@ class AgentConfig:
     
     DEFAULT_CONFIG = {
         "model": {
-            "name": "qwen2.5-7b-instruct",
-            "temperature": 0.2,
+            "name": "qwen2.5-14b-instruct",
+            "temperature": 0,
             "max_tokens": 1024,
             "context_length": 8192
         },
@@ -69,7 +69,7 @@ class AgentConfig:
     
     def _update_nested_dict(self, d: Dict[str, Any], u: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Update a nested dictionary with values from another dictionary.
+        Get a general explanation about a procedure without asking for specific codes.
         
         Args:
             d: Target dictionary to update

@@ -1,0 +1,32 @@
+{
+  "session_id": "a22bbfc3-8a9a-4a92-85cd-2f352e471483",
+  "metadata": {
+    "session_id": "a22bbfc3-8a9a-4a92-85cd-2f352e471483",
+    "start_time": "2025-03-06T06:53:15.837892",
+    "total_messages": 3,
+    "total_codes_identified": 4
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "how do I code a partial parotidectomy?",
+      "timestamp": "2025-03-06T06:53:19.001386"
+    },
+    {
+      "role": "assistant",
+      "content": "To code a partial parotidectomy, we need to consider the specifics of the procedure. There isn't a single CPT code for a partial parotidectomy. However, we can break down the procedure into its components:\n\n1. Removal of all or part of the parotid gland (a major salivary gland)\n2. Potential involvement of surrounding structures, such as nerves and blood vessels\n\nBased on the procedure description, potential CPT codes could include:\n\n* 23216: Incision and exploration of the parotid gland\n* 23225: Partial resection of the parotid gland\n  \u2022 22835: Removal of parotid tissue, with major salivary gland involved; minor procedure (not directly related to the task)\n* 25924: Repair of nerves and/or other structures involved in parotid surgery\n\n**Modification details:**\n- Use 50 for bilateral procedure\n- **Do not** add -80 for assistant surgeon.\n\nBefore coding, ensure you have gathered sufficient information about the procedure and are comfortable with the codes. It\u2019s always a good idea to have an expert verify your coding.\n\nNote that CPT codes can vary based on the location of the surgery, the extent of the surgery (e.g., partial vs. total parotidectomy), and any additional procedures performed. Verify that your codes match your procedure description and use the correct modifiers to accurately report the costs of the codes.",
+      "timestamp": "2025-03-06T06:53:22.584410"
+    },
+    {
+      "role": "assistant",
+      "content": "To code a partial parotidectomy, we need to consider the specifics of the procedure. There isn't a single CPT code for a partial parotidectomy. However, we can break down the procedure into its components:\n\n1. Removal of all or part of the parotid gland (a major salivary gland)\n2. Potential involvement of surrounding structures, such as nerves and blood vessels\n\nBased on the procedure description, potential CPT codes could include:\n\n* 23216: Incision and exploration of the parotid gland\n* 23225: Partial resection of the parotid gland\n  \u2022 22835: Removal of parotid tissue, with major salivary gland involved; minor procedure (not directly related to the task)\n* 25924: Repair of nerves and/or other structures involved in parotid surgery\n\n**Modification details:**\n- Use 50 for bilateral procedure\n- **Do not** add -80 for assistant surgeon.\n\nBefore coding, ensure you have gathered sufficient information about the procedure and are comfortable with the codes. It\u2019s always a good idea to have an expert verify your coding.\n\nNote that CPT codes can vary based on the location of the surgery, the extent of the surgery (e.g., partial vs. total parotidectomy), and any additional procedures performed. Verify that your codes match your procedure description and use the correct modifiers to accurately report the costs of the codes.",
+      "timestamp": "2025-03-06T06:53:22.584756",
+      "codes": [
+        "23216",
+        "23225",
+        "22835",
+        "25924"
+      ]
+    }
+  ]
+}

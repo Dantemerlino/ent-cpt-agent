@@ -38,16 +38,6 @@ class RulesEngine:
             priority=10
         ))
         
-        # Rule: Bilateral procedures
-        self.rules.append(CodeRule(
-            rule_id="R002",
-            description="Check for bilateral procedures (use modifier 50)",
-            conditions=[
-                {"type": "procedure_bilateral", "keywords": ["bilateral", "both sides", "both ears"]}
-            ],
-            priority=8
-        ))
-        
         # Rule: Follow-up visits
         self.rules.append(CodeRule(
             rule_id="R003",
@@ -56,6 +46,16 @@ class RulesEngine:
                 {"type": "post_op", "keywords": ["follow-up", "post-op", "postoperative"]}
             ],
             priority=9
+        ))
+        
+        # Rule: Bilateral procedures
+        self.rules.append(CodeRule(
+            rule_id="R002",
+            description="Check for bilateral procedures (use modifier 50)",
+            conditions=[
+                {"type": "procedure_bilateral", "keywords": ["bilateral", "both sides", "both ears"]}
+            ],
+            priority=8
         ))
         
         # Rule: Check for multiple procedures
@@ -112,6 +112,9 @@ class RulesEngine:
         excluded = []
         explanations = []
         
+        # Create a set to keep track of bundled pairs we've already processed
+        processed_pairs = set()
+        
         # Check each candidate code
         for code in candidate_codes:
             details = code_db.get_code_details(code)
@@ -126,7 +129,13 @@ class RulesEngine:
             
             for related in related_codes:
                 if related in candidate_codes:
-                    bundled_with.append(related)
+                    # Create a unique identifier for this bundled pair (sorted to ensure consistency)
+                    pair_key = '-'.join(sorted([code, related]))
+                    
+                    # Only process this pair if we haven't seen it before
+                    if pair_key not in processed_pairs:
+                        bundled_with.append(related)
+                        processed_pairs.add(pair_key)
             
             if bundled_with:
                 # This code might be bundled with others

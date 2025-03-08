@@ -1,0 +1,32 @@
+{
+  "session_id": "03273d0b-4b54-4863-861e-e9f36f7fa208",
+  "metadata": {
+    "session_id": "03273d0b-4b54-4863-861e-e9f36f7fa208",
+    "start_time": "2025-03-06T06:51:38.975011",
+    "total_messages": 3,
+    "total_codes_identified": 4
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "how do I code a partial parotidectomy?",
+      "timestamp": "2025-03-06T06:51:43.621701"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the search, there are no exact CPT codes for a partial parotidectomy. However, we can use related codes to describe the procedure. \n\nA partial parotidectomy typically involves excision of a portion of the parotid gland due to conditions such as benign tumors (e.g., Warthin's tumor), cysts, or infections. The most relevant CPT code for this type of procedure is likely 13520 (Excision of salivary gland; partial, without extensive dissection and removal of facial nerve).\n\nHere\u2019s the detailed breakdown:\n- **13520**: Excision of salivary gland; partial, without extensive dissection and removal of facial nerve.\n\nIf the procedure involves additional steps such as resection of a significant portion of the gland or other related structures (e.g., superficial lobe), you might consider modifying the code or using additional codes to capture these aspects accurately.\n\nFor example:\n- **13520** alone would be used if only partial excision is performed.\n- If extensive dissection and removal of a significant portion of the gland are necessary, 13780 (Excision of salivary gland; subtotal or total) might also be applicable depending on the specific circumstances.\n\nIt's important to consult with the surgeon who performed the procedure to ensure all aspects are accurately coded. If there were additional procedures performed during the surgery, they may also need separate coding.\n\nWould you like me to provide more information on related codes or proceed with an analysis of a hypothetical case?",
+      "timestamp": "2025-03-06T06:51:50.390192"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the search, there are no exact CPT codes for a partial parotidectomy. However, we can use related codes to describe the procedure. \n\nA partial parotidectomy typically involves excision of a portion of the parotid gland due to conditions such as benign tumors (e.g., Warthin's tumor), cysts, or infections. The most relevant CPT code for this type of procedure is likely 13520 (Excision of salivary gland; partial, without extensive dissection and removal of facial nerve).\n\nHere\u2019s the detailed breakdown:\n- **13520**: Excision of salivary gland; partial, without extensive dissection and removal of facial nerve.\n\nIf the procedure involves additional steps such as resection of a significant portion of the gland or other related structures (e.g., superficial lobe), you might consider modifying the code or using additional codes to capture these aspects accurately.\n\nFor example:\n- **13520** alone would be used if only partial excision is performed.\n- If extensive dissection and removal of a significant portion of the gland are necessary, 13780 (Excision of salivary gland; subtotal or total) might also be applicable depending on the specific circumstances.\n\nIt's important to consult with the surgeon who performed the procedure to ensure all aspects are accurately coded. If there were additional procedures performed during the surgery, they may also need separate coding.\n\nWould you like me to provide more information on related codes or proceed with an analysis of a hypothetical case?",
+      "timestamp": "2025-03-06T06:51:50.390646",
+      "codes": [
+        "13520",
+        "13520",
+        "13520",
+        "13780"
+      ]
+    }
+  ]
+}

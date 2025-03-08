@@ -1,0 +1,26 @@
+{
+  "session_id": "d5cfb472-c5a9-43f3-b108-70e189b96726",
+  "metadata": {
+    "session_id": "d5cfb472-c5a9-43f3-b108-70e189b96726",
+    "start_time": "2025-03-08T10:42:07.368501",
+    "total_messages": 3,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-08T10:42:14.251976"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nA partial parotidectomy with extracapsular dissection involves surgically removing part of the parotid gland, typically to address a lesion such as a tumor or cyst. The extracapsular dissection refers to the surgical technique where tissue is removed outside the capsule of the parotid gland, aiming to preserve healthy tissue while excising diseased areas.\n\n**No specific CPT codes found in our database for this query.**\nPlease try rephrasing with more specific ENT procedure terminology.\n\n**Coding Guidance:**\n- Select the code that most accurately describes the specific procedure performed\n- Check if any modifiers apply (e.g., -50 for bilateral procedures)\n- Ensure documentation in the medical record supports the selected code\n\n*All CPT codes provided are directly verified from our CPT code database.*",
+      "timestamp": "2025-03-08T10:42:16.289204"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nA partial parotidectomy with extracapsular dissection involves surgically removing part of the parotid gland, typically to address a lesion such as a tumor or cyst. The extracapsular dissection refers to the surgical technique where tissue is removed outside the capsule of the parotid gland, aiming to preserve healthy tissue while excising diseased areas.\n\n**No specific CPT codes found in our database for this query.**\nPlease try rephrasing with more specific ENT procedure terminology.\n\n**Coding Guidance:**\n- Select the code that most accurately describes the specific procedure performed\n- Check if any modifiers apply (e.g., -50 for bilateral procedures)\n- Ensure documentation in the medical record supports the selected code\n\n*All CPT codes provided are directly verified from our CPT code database.*",
+      "timestamp": "2025-03-08T10:42:16.289411"
+    }
+  ]
+}

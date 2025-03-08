@@ -1,0 +1,30 @@
+{
+  "session_id": "4615ed4e-394e-43bf-ae1d-e971d2372537",
+  "metadata": {
+    "session_id": "4615ed4e-394e-43bf-ae1d-e971d2372537",
+    "start_time": "2025-03-06T19:41:07.983724",
+    "total_messages": 3,
+    "total_codes_identified": 2
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-06T19:41:11.439256"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nThe procedure described, a partial parotidectomy with extracapsular dissection, can be coded using CPT\u00ae code **38610**.\n\n**Recommended CPT Codes:**\n- **38610**: Parotid gland excision or resection (eg, superficial, deep), including facial nerve identification and preservation; partial gland\n\n*All CPT codes have been verified against our database.*",
+      "timestamp": "2025-03-06T19:41:14.403936"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nThe procedure described, a partial parotidectomy with extracapsular dissection, can be coded using CPT\u00ae code **38610**.\n\n**Recommended CPT Codes:**\n- **38610**: Parotid gland excision or resection (eg, superficial, deep), including facial nerve identification and preservation; partial gland\n\n*All CPT codes have been verified against our database.*",
+      "timestamp": "2025-03-06T19:41:14.404034",
+      "codes": [
+        "38610",
+        "38610"
+      ]
+    }
+  ]
+}

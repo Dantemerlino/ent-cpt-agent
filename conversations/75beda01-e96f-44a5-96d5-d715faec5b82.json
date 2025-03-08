@@ -1,0 +1,36 @@
+{
+  "session_id": "75beda01-e96f-44a5-96d5-d715faec5b82",
+  "metadata": {
+    "session_id": "75beda01-e96f-44a5-96d5-d715faec5b82",
+    "start_time": "2025-03-08T10:57:39.684644",
+    "total_messages": 3,
+    "total_codes_identified": 8
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-08T10:57:43.000183"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nA partial parotidectomy with extracapsular dissection involves surgically removing part of the parotid gland, typically to address a lesion such as a tumor or cyst, while preserving the facial nerve and other structures within the gland capsule. The extracapsular dissection specifically refers to carefully excising tissue outside the capsule of the parotid gland to ensure thorough removal of any affected area without entering the gland itself.\n\n**Verified CPT Codes from Database:**\n1. **42410**: Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection\n2. **42415**: Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve\n3. **42420**: Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve\n4. **42425**: Excision of parotid tumor or parotid gland; total, en bloc removal with sacrifice of facial nerve\n5. **40700**: Plastic repair of cleft lip/nasal deformity; primary, partial or complete, unilateral\n6. **69633**: Tympanoplasty without mastoidectomy (including canalplasty, atticotomy and/or middle ear surgery), initial or revision; with ossicular chain reconstruction and synthetic prosthesis (eg, partial ossicular replacement prosthesis [PORP], total ossicular replacement prosthesis [TORP])\n7. **31254**: Nasal/sinus endoscopy, surgical with ethmoidectomy; partial (anterior)\n8. **42408**: Excision of sublingual salivary cyst (ranula)\n\n**Coding Guidance:**\n- Select the code that most accurately describes the specific procedure performed\n- Check if any modifiers apply (e.g., -50 for bilateral procedures)\n- Ensure documentation in the medical record supports the selected code\n\n*All CPT codes provided are directly verified from our CPT code database.*",
+      "timestamp": "2025-03-08T10:57:45.252453"
+    },
+    {
+      "role": "assistant",
+      "content": "**What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?**\n\nA partial parotidectomy with extracapsular dissection involves surgically removing part of the parotid gland, typically to address a lesion such as a tumor or cyst, while preserving the facial nerve and other structures within the gland capsule. The extracapsular dissection specifically refers to carefully excising tissue outside the capsule of the parotid gland to ensure thorough removal of any affected area without entering the gland itself.\n\n**Verified CPT Codes from Database:**\n1. **42410**: Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection\n2. **42415**: Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve\n3. **42420**: Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve\n4. **42425**: Excision of parotid tumor or parotid gland; total, en bloc removal with sacrifice of facial nerve\n5. **40700**: Plastic repair of cleft lip/nasal deformity; primary, partial or complete, unilateral\n6. **69633**: Tympanoplasty without mastoidectomy (including canalplasty, atticotomy and/or middle ear surgery), initial or revision; with ossicular chain reconstruction and synthetic prosthesis (eg, partial ossicular replacement prosthesis [PORP], total ossicular replacement prosthesis [TORP])\n7. **31254**: Nasal/sinus endoscopy, surgical with ethmoidectomy; partial (anterior)\n8. **42408**: Excision of sublingual salivary cyst (ranula)\n\n**Coding Guidance:**\n- Select the code that most accurately describes the specific procedure performed\n- Check if any modifiers apply (e.g., -50 for bilateral procedures)\n- Ensure documentation in the medical record supports the selected code\n\n*All CPT codes provided are directly verified from our CPT code database.*",
+      "timestamp": "2025-03-08T10:57:45.252866",
+      "codes": [
+        "42410",
+        "42415",
+        "42420",
+        "42425",
+        "40700",
+        "69633",
+        "31254",
+        "42408"
+      ]
+    }
+  ]
+}

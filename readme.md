@@ -77,7 +77,7 @@ pip install -r requirements.txt
 ### Step 2: Configure LM Studio
 
 1. Install LM Studio from the [official website](https://lmstudio.ai/)
-2. Launch LM Studio and download a suitable model (default: qwen2.5-7b-instruct)
+2. Launch LM Studio and download a suitable model (default: qwen2.5-14b-instruct)
 3. Start the LM Studio server:
    ```bash
    lms server start
@@ -360,7 +360,7 @@ Response:
   "status": "success",
   "message": "Service is healthy",
   "details": {
-    "model": "qwen2.5-7b-instruct",
+    "model": "qwen2.5-14b-instruct",
     "database": "data/CPT codes for ENT.xlsx",
     "conversation_dir": "conversations"
   }

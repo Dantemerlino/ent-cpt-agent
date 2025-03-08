@@ -1,0 +1,31 @@
+{
+  "session_id": "ed9312f6-7b71-4e3d-9353-840dd0d7e8be",
+  "metadata": {
+    "session_id": "ed9312f6-7b71-4e3d-9353-840dd0d7e8be",
+    "start_time": "2025-03-06T06:54:31.177339",
+    "total_messages": 3,
+    "total_codes_identified": 3
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-06T06:54:34.966816"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the search results, there isn't a specific CPT code that exactly matches \"partial parotidectomy with extracapsular dissection.\" However, for procedures involving the parotid gland, the relevant codes are typically found within the 42400-42500 range in the CPT manual.\n\nLet's try to break down the procedure:\n- Partial parotidectomy usually refers to the removal of a portion of the parotid gland.\n- Extracapsular dissection implies that the dissection is performed outside the capsule of the gland or tumor, which is an important detail for certain coding purposes.\n\nGiven this information, here are some steps and codes you might consider:\n1. **Search for Parotidectomy Codes**: Look for codes related to parotid gland surgeries. The primary code for a partial parotidectomy could be something like 42400 or similar, depending on the specifics of the procedure (age of patient, whether it's a primary or secondary procedure, etc.).\n\n2. **Consider Dissection Techniques**: If there's a specific mention of an extracapsular dissection in your procedure notes, you might need to look for codes that specify the surgical technique used. Sometimes, these are included as part of the main code description or might require an additional code for the dissection itself.\n\n3. **Modifiers and Additional Codes**: Depending on the specifics of the case (bilateral procedures, use of special equipment, etc.), you might need to apply modifiers (-50 for bilateral, for example) or include additional codes for other procedures performed during the surgery.\n\n4. **Validate the Code Choice**: After identifying potential codes, validate them against the CPT manual or an updated coding resource to ensure accuracy and compliance with current coding guidelines.\n\nSince the exact code wasn't provided by the tool due to the specificity of the query, I recommend consulting a recent edition of the CPT coding manual or a qualified medical coder for the most accurate and up-to-date guidance. Remember, the description of the procedure must exactly match the code chosen, including any specifics about the surgical approach or patient age.",
+      "timestamp": "2025-03-06T06:56:26.558476"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the search results, there isn't a specific CPT code that exactly matches \"partial parotidectomy with extracapsular dissection.\" However, for procedures involving the parotid gland, the relevant codes are typically found within the 42400-42500 range in the CPT manual.\n\nLet's try to break down the procedure:\n- Partial parotidectomy usually refers to the removal of a portion of the parotid gland.\n- Extracapsular dissection implies that the dissection is performed outside the capsule of the gland or tumor, which is an important detail for certain coding purposes.\n\nGiven this information, here are some steps and codes you might consider:\n1. **Search for Parotidectomy Codes**: Look for codes related to parotid gland surgeries. The primary code for a partial parotidectomy could be something like 42400 or similar, depending on the specifics of the procedure (age of patient, whether it's a primary or secondary procedure, etc.).\n\n2. **Consider Dissection Techniques**: If there's a specific mention of an extracapsular dissection in your procedure notes, you might need to look for codes that specify the surgical technique used. Sometimes, these are included as part of the main code description or might require an additional code for the dissection itself.\n\n3. **Modifiers and Additional Codes**: Depending on the specifics of the case (bilateral procedures, use of special equipment, etc.), you might need to apply modifiers (-50 for bilateral, for example) or include additional codes for other procedures performed during the surgery.\n\n4. **Validate the Code Choice**: After identifying potential codes, validate them against the CPT manual or an updated coding resource to ensure accuracy and compliance with current coding guidelines.\n\nSince the exact code wasn't provided by the tool due to the specificity of the query, I recommend consulting a recent edition of the CPT coding manual or a qualified medical coder for the most accurate and up-to-date guidance. Remember, the description of the procedure must exactly match the code chosen, including any specifics about the surgical approach or patient age.",
+      "timestamp": "2025-03-06T06:56:26.558743",
+      "codes": [
+        "42400",
+        "42500",
+        "42400"
+      ]
+    }
+  ]
+}

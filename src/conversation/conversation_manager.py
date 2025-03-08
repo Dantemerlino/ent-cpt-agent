@@ -86,10 +86,27 @@ class Conversation:
         Returns:
             Dictionary representation of the conversation
         """
+        # Make a copy of the messages to ensure we have valid JSON
+        safe_messages = []
+        for msg in self.messages:
+            # Create a clean copy of the message
+            safe_msg = {
+                "role": str(msg.get("role", "")),
+                "content": str(msg.get("content", "")),
+                "timestamp": str(msg.get("timestamp", ""))
+            }
+            
+            # Safely add codes if they exist
+            if "codes" in msg and isinstance(msg["codes"], list):
+                safe_msg["codes"] = [str(code) for code in msg["codes"]]
+            
+            safe_messages.append(safe_msg)
+        
         return {
-            "session_id": self.session_id,
-            "metadata": self.metadata,
-            "messages": self.messages
+            "session_id": str(self.session_id),
+            "metadata": {k: str(v) if not isinstance(v, (int, bool, float)) else v 
+                         for k, v in self.metadata.items()},
+            "messages": safe_messages
         }
     
     @classmethod
@@ -160,22 +177,41 @@ class ConversationManager:
             logger.warning(f"Conversation directory not found: {self.conversation_dir}")
             return
         
-        try:
-            for filename in os.listdir(self.conversation_dir):
-                if not filename.endswith('.json'):
-                    continue
-                
-                file_path = os.path.join(self.conversation_dir, filename)
-                
+        loaded_count = 0
+        skipped_count = 0
+        
+        for filename in os.listdir(self.conversation_dir):
+            if not filename.endswith('.json'):
+                continue
+            
+            file_path = os.path.join(self.conversation_dir, filename)
+            
+            try:
                 with open(file_path, 'r') as f:
                     data = json.load(f)
                 
                 conversation = Conversation.from_dict(data)
                 self.conversations[conversation.session_id] = conversation
+                loaded_count += 1
                 
-            logger.info(f"Loaded {len(self.conversations)} conversations")
-        except Exception as e:
-            logger.error(f"Error loading conversations: {e}")
+            except json.JSONDecodeError as e:
+                logger.warning(f"Skipping corrupted conversation file {filename}: {e}")
+                # Backup the corrupted file
+                backup_path = file_path + ".corrupted"
+                try:
+                    os.rename(file_path, backup_path)
+                    logger.info(f"Backed up corrupted file to {backup_path}")
+                except Exception as backup_err:
+                    logger.error(f"Failed to backup corrupted file: {backup_err}")
+                skipped_count += 1
+                
+            except Exception as e:
+                logger.warning(f"Error loading conversation from {filename}: {e}")
+                skipped_count += 1
+                
+        logger.info(f"Loaded {loaded_count} conversations (skipped {skipped_count})")
+        if skipped_count > 0:
+            logger.warning(f"Some conversation files ({skipped_count}) were corrupted or invalid")
     
     def save_conversation(self, conversation: Conversation) -> None:
         """
@@ -191,12 +227,26 @@ class ConversationManager:
         file_path = os.path.join(self.conversation_dir, f"{conversation.session_id}.json")
         
         try:
+            # First validate that the conversation can be serialized properly
+            conversation_dict = conversation.to_dict()
+            json_str = json.dumps(conversation_dict, indent=2)
+            
+            # If we got here, JSON serialization worked, now save to file
             with open(file_path, 'w') as f:
-                json.dump(conversation.to_dict(), f, indent=2)
+                f.write(json_str)
             
             logger.info(f"Saved conversation {conversation.session_id}")
         except Exception as e:
             logger.error(f"Error saving conversation: {e}")
+            # Create a backup file with a timestamp in case there's an issue
+            import time
+            backup_path = file_path + f".backup.{int(time.time())}"
+            try:
+                with open(backup_path, 'w') as f:
+                    f.write(str(conversation.__dict__))
+                logger.info(f"Created emergency backup of conversation at {backup_path}")
+            except Exception as backup_err:
+                logger.error(f"Failed to create backup file: {backup_err}")
     
     def create_conversation(self) -> Conversation:
         """

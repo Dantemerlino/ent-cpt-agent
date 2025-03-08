@@ -18,7 +18,7 @@
                 },
                 {
                     "name": "config.json",
-                    "content": "{\n    \"model\": {\n      \"name\": \"qwen2.5-7b-instruct\",\n      \"temperature\": 0.2,\n      \"max_tokens\": 1024,\n      \"context_length\": 8192\n    },\n    \"cpt_database\": {\n      \"file_path\": \"CPT codes for ENT.xlsx\",\n      \"sheet_name\": \"Sheet1\"\n    },\n    \"agent\": {\n      \"log_level\": \"INFO\",\n      \"save_conversations\": true,\n      \"conversation_dir\": \"conversations\"\n    },\n    \"server\": {\n      \"host\": \"localhost\",\n      \"port\": 8000,\n      \"enable_api\": false,\n      \"lm_studio_base_url\": \"http://localhost:1234/v1\",\n      \"lm_studio_api_key\": \"lm-studio\"\n    }\n  }"
+                    "content": "{\n    \"model\": {\n      \"name\": \"qwen2.5-14b-instruct\",\n      \"temperature\": 0.2,\n      \"max_tokens\": 1024,\n      \"context_length\": 8192\n    },\n    \"cpt_database\": {\n      \"file_path\": \"CPT codes for ENT.xlsx\",\n      \"sheet_name\": \"Sheet1\"\n    },\n    \"agent\": {\n      \"log_level\": \"INFO\",\n      \"save_conversations\": true,\n      \"conversation_dir\": \"conversations\"\n    },\n    \"server\": {\n      \"host\": \"localhost\",\n      \"port\": 8000,\n      \"enable_api\": false,\n      \"lm_studio_base_url\": \"http://localhost:1234/v1\",\n      \"lm_studio_api_key\": \"lm-studio\"\n    }\n  }"
                 },
                 {
                     "name": "CPT codes for ENT.xlsx",

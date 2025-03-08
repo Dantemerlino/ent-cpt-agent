@@ -101,7 +101,7 @@ This will create a default `config.json` file with the following structure:
 ### 3.3 Set Up LM Studio
 
 1. Install and launch LM Studio
-2. Download the recommended model (default: qwen2.5-7b-instruct)
+2. Download the recommended model (default: qwen2.5-14b-instruct)
 3. Ensure LM Studio's Python SDK is properly installed:
    
    ```bash

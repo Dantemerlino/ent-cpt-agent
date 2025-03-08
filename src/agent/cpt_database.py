@@ -45,27 +45,66 @@ class CPTCodeDatabase:
             # Load the Excel file into a pandas DataFrame
             self.df = pd.read_excel(self.file_path)
             
+            # Log DataFrame info for debugging
+            logger.info(f"Excel file loaded: {len(self.df)} rows, {len(self.df.columns)} columns")
+            logger.info(f"Column names: {self.df.columns.tolist()}")
+            
+            # Check first few rows
+            if len(self.df) > 0:
+                logger.info(f"First row sample: {self.df.iloc[0].to_dict()}")
+            
             # Process the dataframe to create lookup dictionaries
+            row_count = 0
             for _, row in self.df.iterrows():
-                code = str(row.get('CPT Code', '')).strip()
+                # Try different column name variations
+                code_column_names = ['CPT Code', 'CPT_Code', 'CPTCode', 'Code', 'cpt_code', 'cpt code', 'CPT']
+                code = None
+                
+                # Try to find the code in any of the possible column names
+                for col_name in code_column_names:
+                    if col_name in row and not pd.isna(row[col_name]):
+                        # Convert to string (handles numeric CPT codes)
+                        code = str(row[col_name]).strip()
+                        break
+                
                 if code and not pd.isna(code):
-                    # Store description
-                    self.code_descriptions[code] = row.get('Description', '')
+                    # Store description - try to find description column
+                    desc_column_names = ['Description', 'Desc', 'description', 'desc', 'Detailed description']
+                    description = ""
+                    for desc_col in desc_column_names:
+                        if desc_col in row and not pd.isna(row[desc_col]):
+                            description = row[desc_col]
+                            break
+                    
+                    self.code_descriptions[code] = description
+                    row_count += 1
                     
                     # Store category
-                    category = row.get('Category', '')
-                    if category and not pd.isna(category):
+                    category_cols = ['Category', 'category', 'Type', 'type', 'Area', 'area']
+                    category = ""
+                    for cat_col in category_cols:
+                        if cat_col in row and not pd.isna(row[cat_col]):
+                            category = row[cat_col]
+                            break
+                            
+                    if category:
                         if category not in self.code_categories:
                             self.code_categories[category] = []
                         self.code_categories[category].append(code)
                     
                     # Store related codes
-                    related = row.get('Related Codes', '')
-                    if related and not pd.isna(related):
+                    related_cols = ['Related Codes', 'Related_Codes', 'Related', 'related_codes', 'related']
+                    related = ""
+                    for rel_col in related_cols:
+                        if rel_col in row and not pd.isna(row[rel_col]):
+                            related = row[rel_col]
+                            break
+                            
+                    if related:
                         related_codes = [r.strip() for r in str(related).split(',')]
                         self.related_codes[code] = related_codes
             
-            logger.info(f"Loaded {len(self.code_descriptions)} CPT codes")
+            logger.info(f"Loaded {row_count} CPT codes")
         except Exception as e:
             logger.error(f"Error loading CPT codes: {e}")
             raise
