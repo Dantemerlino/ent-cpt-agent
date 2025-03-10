@@ -7,6 +7,7 @@ This script starts the web interface server for the ENT CPT Code Agent.
 import os
 import logging
 from src.web.templates.app import app
+from pyngrok import ngrok  
 
 # Configure logging
 logging.basicConfig(
@@ -24,7 +25,9 @@ if __name__ == "__main__":
         debug = os.environ.get("DEBUG", "False").lower() == "true"
         
         logger.info(f"Starting web UI server on {host}:{port} (debug={debug})")
-        
+        # Open an ngrok tunnel for the Flask app
+        tunnel = ngrok.connect(port, "http")
+        logger.info(f"Ngrok tunnel established at {tunnel.public_url}")
         # Start the Flask application
         app.run(host=host, port=port, debug=debug)
     except Exception as e:
