@@ -1,0 +1,21 @@
+{
+  "session_id": "ca016da4-2d36-4c33-a0a4-a06b225e4b8d",
+  "metadata": {
+    "session_id": "ca016da4-2d36-4c33-a0a4-a06b225e4b8d",
+    "start_time": "2025-03-09T19:01:26.917203",
+    "total_messages": 2,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:01:39.957794"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: name 'handle_tool_call' is not defined",
+      "timestamp": "2025-03-09T19:01:44.993026"
+    }
+  ]
+}

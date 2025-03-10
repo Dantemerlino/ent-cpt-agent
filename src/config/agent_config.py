@@ -1,5 +1,6 @@
 """
 Configuration manager for the ENT CPT Code Agent.
+File name and location: ent-cpt-agent/src/config/agent_config.py
 """
 
 import json
@@ -23,7 +24,7 @@ class AgentConfig:
             "context_length": 8192
         },
         "cpt_database": {
-            "file_path": "CPT codes for ENT.xlsx",
+            "file_path": "ALL_ENT_CPT_codes.xlsx",
             "sheet_name": "Sheet1"
         },
         "agent": {

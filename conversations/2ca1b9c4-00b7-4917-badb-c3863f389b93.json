@@ -1,0 +1,36 @@
+{
+  "session_id": "2ca1b9c4-00b7-4917-badb-c3863f389b93",
+  "metadata": {
+    "session_id": "2ca1b9c4-00b7-4917-badb-c3863f389b93",
+    "start_time": "2025-03-09T17:45:01.110211",
+    "total_messages": 3,
+    "total_codes_identified": 6
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T17:45:06.164821"
+    },
+    {
+      "role": "assistant",
+      "content": "It seems there isn't a direct CPT code for \"partial parotidectomy with extracapsular dissection.\" However, this procedure can often be coded using a combination of codes or by selecting the closest matching procedures. For such complex surgical cases, it's common to use:\n\n- Code: 40325 - Parotid gland excision (eg, pleomorphic adenoma), with facial nerve monitoring\n- Category: Surgery\n- Key Indicator: No\n\nSince extracapsular dissection is a specific technique used in the context of parotid surgery, it might be necessary to document this detail thoroughly in the operative report and possibly use an unlisted procedure code if no other codes accurately capture the entire scope of the operation.\n\nFor completeness and billing accuracy, you may also consider using:\n\n- Code: 40326 - Parotid gland excision (eg, pleomorphic adenoma), with facial nerve monitoring; extensive dissection\n- Category: Surgery\n- Key Indicator: No\n\nIf neither code fits perfectly, an unlisted procedure code would be appropriate to ensure the complexity and specifics of the surgery are documented:\n\n- Code: 69999 - Unlisted procedure, head and neck\n- Category: Surgery\n- Key Indicator: Yes\n\nPlease consult with your billing department or coding specialist for further guidance on how best to document this specific case.",
+      "timestamp": "2025-03-09T17:45:17.570178",
+      "codes": [
+        "40325",
+        "40326",
+        "69999"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "It seems there isn't a direct CPT code for \"partial parotidectomy with extracapsular dissection.\" However, this procedure can often be coded using a combination of codes or by selecting the closest matching procedures. For such complex surgical cases, it's common to use:\n\n- Code: 40325 - Parotid gland excision (eg, pleomorphic adenoma), with facial nerve monitoring\n- Category: Surgery\n- Key Indicator: No\n\nSince extracapsular dissection is a specific technique used in the context of parotid surgery, it might be necessary to document this detail thoroughly in the operative report and possibly use an unlisted procedure code if no other codes accurately capture the entire scope of the operation.\n\nFor completeness and billing accuracy, you may also consider using:\n\n- Code: 40326 - Parotid gland excision (eg, pleomorphic adenoma), with facial nerve monitoring; extensive dissection\n- Category: Surgery\n- Key Indicator: No\n\nIf neither code fits perfectly, an unlisted procedure code would be appropriate to ensure the complexity and specifics of the surgery are documented:\n\n- Code: 69999 - Unlisted procedure, head and neck\n- Category: Surgery\n- Key Indicator: Yes\n\nPlease consult with your billing department or coding specialist for further guidance on how best to document this specific case.",
+      "timestamp": "2025-03-09T17:45:17.570380",
+      "codes": [
+        "40325",
+        "40326",
+        "69999"
+      ]
+    }
+  ]
+}

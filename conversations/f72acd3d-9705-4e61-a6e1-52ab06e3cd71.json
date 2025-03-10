@@ -1,0 +1,46 @@
+{
+  "session_id": "f72acd3d-9705-4e61-a6e1-52ab06e3cd71",
+  "metadata": {
+    "session_id": "f72acd3d-9705-4e61-a6e1-52ab06e3cd71",
+    "start_time": "2025-03-09T19:52:20.320950",
+    "total_messages": 3,
+    "total_codes_identified": 16
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:52:23.830603"
+    },
+    {
+      "role": "assistant",
+      "content": "**OPTION 1: CPT 42410 (Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection)**\n\nThis code is appropriate if the procedure involves excising only the lateral lobe of the parotid gland and does not include a detailed facial nerve preservation technique. If your partial parotidectomy includes an extracapsular dissection but does not specifically involve dissecting around the facial nerve, this would be the most relevant CPT code.\n\n**OPTION 2: CPT 42415 (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve)**\n\nIf your partial parotidectomy involves an extracapsular dissection that includes careful handling and preservation of the facial nerve, this code would be more appropriate. This procedure is more complex than a simple excision without detailed nerve work.\n\n**OPTION 3: CPT 42420 (Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve)**\n\nIf the partial parotidectomy involves extensive dissection that could be considered as nearly a total excision but still preserves the facial nerve, this code might also apply. However, it is generally used for more comprehensive procedures where most of the gland is removed.\n\n**Explanation:**\n- **CPT 42410**: Use when the procedure focuses on removing only part of the parotid gland (lateral lobe) without detailed dissection around the facial nerve.\n- **CPT 42415**: Recommended if the extracapsular dissection includes careful handling and preservation of the facial nerve, indicating a more complex surgical approach.\n- **CPT 42420**: Consider this code if the procedure is extensive enough to be nearly total but still preserves the facial nerve. However, it's typically used for procedures that are closer to being total excisions.\n\nGiven your description of an extracapsular dissection with careful handling of the facial nerve, **CPT 42415** would likely be the most appropriate code unless you can justify a more extensive procedure under CPT 42420.",
+      "timestamp": "2025-03-09T19:52:39.440708",
+      "codes": [
+        "42410",
+        "42415",
+        "42420",
+        "42410",
+        "42415",
+        "42420",
+        "42415",
+        "42420"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "**OPTION 1: CPT 42410 (Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection)**\n\nThis code is appropriate if the procedure involves excising only the lateral lobe of the parotid gland and does not include a detailed facial nerve preservation technique. If your partial parotidectomy includes an extracapsular dissection but does not specifically involve dissecting around the facial nerve, this would be the most relevant CPT code.\n\n**OPTION 2: CPT 42415 (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve)**\n\nIf your partial parotidectomy involves an extracapsular dissection that includes careful handling and preservation of the facial nerve, this code would be more appropriate. This procedure is more complex than a simple excision without detailed nerve work.\n\n**OPTION 3: CPT 42420 (Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve)**\n\nIf the partial parotidectomy involves extensive dissection that could be considered as nearly a total excision but still preserves the facial nerve, this code might also apply. However, it is generally used for more comprehensive procedures where most of the gland is removed.\n\n**Explanation:**\n- **CPT 42410**: Use when the procedure focuses on removing only part of the parotid gland (lateral lobe) without detailed dissection around the facial nerve.\n- **CPT 42415**: Recommended if the extracapsular dissection includes careful handling and preservation of the facial nerve, indicating a more complex surgical approach.\n- **CPT 42420**: Consider this code if the procedure is extensive enough to be nearly total but still preserves the facial nerve. However, it's typically used for procedures that are closer to being total excisions.\n\nGiven your description of an extracapsular dissection with careful handling of the facial nerve, **CPT 42415** would likely be the most appropriate code unless you can justify a more extensive procedure under CPT 42420.",
+      "timestamp": "2025-03-09T19:52:39.440899",
+      "codes": [
+        "42410",
+        "42415",
+        "42420",
+        "42410",
+        "42415",
+        "42420",
+        "42415",
+        "42420"
+      ]
+    }
+  ]
+}

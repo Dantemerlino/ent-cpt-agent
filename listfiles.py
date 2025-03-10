@@ -13,7 +13,7 @@ def get_directory_info(target_folder):
 
         for root, dirs, files in os.walk(target_folder):
             # Exclude ignored directories
-            dirs[:] = [d for d in dirs if d not in {'venv', '__pycache__'}]
+            dirs[:] = [d for d in dirs if d not in {'venv', '__pycache__', 'data',".git"}]
 
             # Relative path for readability
             relative_root = os.path.relpath(root, target_folder)
@@ -54,7 +54,8 @@ def get_directory_info(target_folder):
     print(f"Directory information saved to {text_output_file} and {json_output_file}")
 
 if __name__ == "__main__":
-    folder_path = input("Enter the folder path: ").strip()
+    #folder_path = input("Enter the folder path: ").strip()
+    folder_path = "/Users/dantemacstudio/Desktop/Claude_playground/ent-cpt-agent"
     if os.path.isdir(folder_path):
         get_directory_info(folder_path)
     else:

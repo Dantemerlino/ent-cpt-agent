@@ -1,24 +1,80 @@
 """
-Streamlined ENT CPT Agent implementation with direct database lookup.
+ENT CPT Agent v2.1 - Enhanced implementation with key indicator and standard charge prioritization.
+
+This module implements a more powerful ENT CPT Code Agent using:
+- Agent-based architecture with tool functions
+- Structured responses for code validation
+- Enhanced parameter management
+- Better error handling and database interaction
+- Key indicator prioritization
+- Standard charge-based sorting
+
+File name and location: ent-cpt-agent/src/agent/ent_cpt_agent.py
+
 """
 
+
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+import pandas as pd
 import logging
 import json
 import re
-import os
-from typing import List, Dict, Any, Optional
+import numpy as np
+from typing import List, Dict, Any, Optional, Tuple, Union
+from pathlib import Path
 from openai import OpenAI
-
-# Configure logging
+from sentence_transformers import SentenceTransformer
+import faiss
+from pydantic import BaseModel, Field
 logger = logging.getLogger("ent_cpt_agent")
 
-# Import required components
-from src.agent.cpt_database import CPTCodeDatabase
-from src.agent.rules_engine import RulesEngine
+class CPTCode(BaseModel):
+    """Pydantic model for a CPT code with its details."""
+    code: str
+    description: str
+    related_codes: List[str] = Field(default_factory=list)
+    category: str = ""
+    key_indicator: bool = False
+    standard_charge: float = 0.0
+    recommended: bool = True
+    reason: str = ""
+
+class CPTSearchResult(BaseModel):
+    """Pydantic model for CPT code search results."""
+    codes: List[CPTCode]
+    query: str
+    total_results: int
+    status: str = "success"
+    message: str = ""
+
+class ProcedureAnalysis(BaseModel):
+    """Pydantic model for procedure analysis results."""
+    procedure: str
+    recommended_codes: List[CPTCode]
+    excluded_codes: List[CPTCode] = Field(default_factory=list)
+    bilateral: bool = False
+    multiple_procedures: bool = False
+    bundled_codes: bool = False
+    explanation: str
+    status: str = "success"
+
+class HealthCheck(BaseModel):
+    """Pydantic model for health check responses."""
+    status: str = "healthy"
+    model: str
+    database: str
+    database_version: str
+    codes_loaded: int
+    key_indicators_loaded: int = 0
+    standard_charges_loaded: int = 0
+    server_version: str = "2.1.0"
 
 class ENTCPTAgent:
     """
     Agent for processing ENT procedure queries and determining appropriate CPT codes.
+    Uses LM Studio to enhance natural language understanding and code selection.
+    Now with key indicator and standard charge prioritization.
     """
     def __init__(self, config, conversation_manager=None):
         """Initialize the ENT CPT Agent."""
@@ -37,356 +93,399 @@ class ENTCPTAgent:
         self.model_name = self.config.get("model", "name")
         self.model_temperature = float(self.config.get("model", "temperature"))
         self.model_max_tokens = int(self.config.get("model", "max_tokens"))
+        self.cpt_db_path = self.config.get("cpt_database", "file_path")
         
-        # Fix database path - ensure we're using absolute path when needed
-        cpt_db_path = self.config.get("cpt_database", "file_path")
-        
-        # If the path is relative and not found, try constructing an absolute path
-        if not os.path.isabs(cpt_db_path) and not os.path.exists(cpt_db_path):
-            # Try from project root
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-            self.cpt_db_path = os.path.join(project_root, cpt_db_path) 
-            if not os.path.exists(self.cpt_db_path):
-                # If still not found, try the alternative file in the root directory
-                self.cpt_db_path = os.path.join(project_root, 'CPT codes for ENT.xlsx')
-                if not os.path.exists(self.cpt_db_path):
-                    logger.warning(f"Could not find CPT database file at {self.cpt_db_path}")
-                    logger.warning("Falling back to direct path")
-                    self.cpt_db_path = 'CPT codes for ENT.xlsx'
-        else:
-            self.cpt_db_path = cpt_db_path
-            
-        logger.info(f"Using CPT database path: {self.cpt_db_path}")
-        
-        # Set model to True for compatibility
-        self.model = True
         
         # Initialize OpenAI client for LM Studio
         server_config = self.config.get("server")
+
         base_url = server_config.get("lm_studio_base_url", "http://localhost:1234/v1")
         api_key = server_config.get("lm_studio_api_key", "lm-studio")
         
         self.client = OpenAI(base_url=base_url, api_key=api_key)
         logger.info(f"Connected to LM Studio at {base_url}")
-        
+      
         # Initialize components
-        self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
-        self.rules_engine = RulesEngine()
+        self.cpt_db = None
+        self.procedure_search = None
+        self.validate_cpt_code = None
+        self.analyze_procedure = None
+        self.get_explanation = None
+        try:
+            # First try to import from same directory
+            from src.agent.cpt_database import CPTCodeDatabase
+            self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
+        except ImportError:
+            try:
+                # Try relative import
+                from .cpt_database import CPTCodeDatabase
+                self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
+            except ImportError:
+                try:
+                    # Try direct import (if in same directory)
+                    import sys
+                    import os
+                    sys.path.append(os.path.dirname(__file__))
+                    from cpt_database import CPTCodeDatabase
+                    self.cpt_db = CPTCodeDatabase(self.cpt_db_path)
+                except ImportError:
+                    raise ImportError("Could not import CPTCodeDatabase. Make sure cpt_database.py is in the correct location.")
+            
+        self.rules_engine = None
+        try:
+            # First try to import from same directory
+            from src.agent.rules_engine import RulesEngine
+            self.rules_engine = RulesEngine()
+        except ImportError:
+            try:
+                # Try relative import
+                from .rules_engine import RulesEngine
+                self.rules_engine = RulesEngine()
+            except ImportError:
+                try:
+                    # Try direct import (if in same directory)
+                    import sys
+                    import os
+                    sys.path.append(os.path.dirname(__file__))
+                    from rules_engine import RulesEngine
+                    self.rules_engine = RulesEngine()
+                except ImportError:
+                    raise ImportError("Could not import RulesEngine. Make sure rules_engine.py is in the correct location.")
+            
         self.conversation_manager = conversation_manager
         
-        # Enhance CPT database with better search capabilities
-        self._enhance_cpt_database()
+        logger.info("ENTCPTAgent v2.1 initialized successfully with key indicator and standard charge support")
+        # Load CPT codes database
+        self.cpt_db = pd.read_excel(self.cpt_db_path)
         
-        logger.info("ENTCPTAgent initialized successfully")
+        # Initialize embedding model
+        self.embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+        # Load or create FAISS index
+        self.faiss_index, self.embeddings = self._init_faiss_index()
+
+    def _init_faiss_index(self):
+        BASE_DIR = Path(__file__).resolve().parents[2]  # Moves two directories up from ent_cpt_agent.py
+        embedding_path = BASE_DIR / 'data' / 'cpt_embeddings.npy'
+        index_path = BASE_DIR / 'data' / 'faiss_index.idx'
+
+        if embedding_path.exists() and index_path.exists():
+            embeddings_array = np.load(str(embedding_path))
+            faiss_index = faiss.read_index(str(index_path))
+            logger.info("Loaded pre-built FAISS index.")
+        else:
+            descriptions = self.cpt_db['description'].tolist()
+            embeddings = self.embed_model.encode(descriptions, show_progress_bar=True)
+            embeddings_array = np.array(embeddings).astype('float32')
+
+            # Initialize FAISS index
+            faiss_index = faiss.IndexFlatL2(embeddings_array.shape[1])
+            faiss_index.add(embeddings_array)
+
+            # Save embeddings and index
+            np.save(embedding_path, embeddings_array)
+            faiss.write_index(faiss_index, str(index_path))
+
+            logger.info("Created new FAISS index and embeddings.")
+
+        return faiss_index, embeddings_array
+    def _call_llm(self, messages: List[Dict[str, str]], config: Optional[Dict[str, Any]] = None) -> str:
+            """
+            Call the LLM with messages and configuration.
+            
+            Args:
+                messages: A list of message dictionaries (role, content)
+                config: Optional configuration parameters
+                
+            Returns:
+                The LLM's response text
+            """
+            try:
+                # Apply default configuration values
+                call_config = {
+                    "temperature": self.model_temperature,
+                    "max_tokens": self.model_max_tokens
+                }
+                
+                # Override with any provided configuration
+                if config:
+                    call_config.update(config)
+                
+                # Call the model
+                response = self.client.chat.completions.create(
+                    model=self.model_name,
+                    messages=messages,
+                    **call_config
+                )
+                
+                # Return the text content
+                return response.choices[0].message.content.strip()
+                
+            except Exception as e:
+                logger.error(f"Error calling LLM: {e}")
+                return f"Error: {str(e)}"
     
-    def initialize_model(self) -> None:
-        """Compatibility method for model initialization."""
-        self.model = True
-        logger.info("Model compatibility layer initialized")
-    
-    def _enhance_cpt_database(self) -> None:
-        """Add enhanced search capabilities to the CPT database."""
-        # Create keyword index for faster and more accurate searches
-        self.cpt_db.keyword_index = {}
-        
-        # Map of common procedure terms to standardized keywords
-        self.cpt_db.procedure_term_map = {
-            # Parotid procedures
-            "parotid": ["parotid", "parotidectomy", "salivary"],
-            "parotidectomy": ["parotid", "parotidectomy", "salivary"],
-            "salivary": ["parotid", "submandibular", "salivary", "gland"],
-            
-            # Ear procedures
-            "ear": ["ear", "aural", "tympanic", "mastoid", "cochlear"],
-            "tympano": ["ear", "tympanic", "tympanoplasty"],
-            "mastoid": ["ear", "mastoid", "mastoidectomy"],
-            "myringotomy": ["ear", "myringotomy", "tympanic"],
-            
-            # Nose procedures
-            "nose": ["nose", "nasal", "rhinoplasty", "septum", "turbinate"],
-            "nasal": ["nose", "nasal", "rhinoplasty", "septum"],
-            "sinus": ["sinus", "endoscopic", "maxillary", "frontal", "ethmoid"],
-            "septum": ["nose", "septum", "septoplasty"],
-            
-            # Throat procedures
-            "throat": ["throat", "pharynx", "tonsil", "adenoid", "larynx"],
-            "tonsil": ["tonsil", "tonsillectomy", "adenoid"],
-            "adenoid": ["adenoid", "adenoidectomy", "tonsil"],
-            "larynx": ["larynx", "laryngoscopy", "laryngeal"],
-            
-            # Common procedure types
-            "biopsy": ["biopsy", "excision", "removal"],
-            "excision": ["excision", "removal", "resection"],
-            "endoscopic": ["endoscopic", "endoscopy", "scope"],
-            "partial": ["partial", "incomplete", "subtotal"],
-            "total": ["total", "complete", "entire"]
-        }
-        
-        # Build the keyword index
-        for code, description in self.cpt_db.code_descriptions.items():
-            description_lower = description.lower()
-            
-            # Add each word in the description as a key
-            for word in description_lower.split():
-                if len(word) > 3:  # Only index words longer than 3 characters
-                    if word not in self.cpt_db.keyword_index:
-                        self.cpt_db.keyword_index[word] = []
-                    self.cpt_db.keyword_index[word].append(code)
-            
-            # Add expanded keywords for common terms
-            for term, related_keywords in self.cpt_db.procedure_term_map.items():
-                if term in description_lower:
-                    for keyword in related_keywords:
-                        if keyword not in self.cpt_db.keyword_index:
-                            self.cpt_db.keyword_index[keyword] = []
-                        if code not in self.cpt_db.keyword_index[keyword]:
-                            self.cpt_db.keyword_index[keyword].append(code)
-    
-    def _search_codes(self, query: str) -> List[Dict[str, Any]]:
+    def procedure_search(self, query: str) -> Dict[str, Any]:
         """
-        Enhanced search for CPT codes with better keyword matching.
+        Search for CPT codes based on a query, with prioritization by key indicators and standard charges.
         
         Args:
-            query: Search terms for finding relevant CPT codes
+            query: Search query text
+            limit: Maximum number of results to return
             
         Returns:
-            List of matching CPT codes with descriptions
-        """
-        query_lower = query.lower()
-        results = []
-        matched_codes = set()
-        
-        # First try exact matching as in original search
-        for code, description in self.cpt_db.code_descriptions.items():
-            if query_lower in description.lower() or query_lower in code:
-                results.append({
-                    "code": code,
-                    "description": description,
-                    "related_codes": self.cpt_db.related_codes.get(code, []),
-                    "match_quality": "exact",
-                    "score": 100  # Give exact matches a high score
-                })
-                matched_codes.add(code)
-        
-        # If exact matching yielded results, return them
-        if results:
-            return results
-        
-        # No exact matches, try keyword matching
-        query_terms = query_lower.split()
-        
-        # Expand query terms using our term map
-        expanded_terms = set()
-        for term in query_terms:
-            expanded_terms.add(term)
-            if hasattr(self.cpt_db, 'procedure_term_map') and term in self.cpt_db.procedure_term_map:
-                expanded_terms.update(self.cpt_db.procedure_term_map[term])
-        
-        # Search using expanded terms
-        code_scores = {}  # Track match scores for each code
-        
-        for term in expanded_terms:
-            if hasattr(self.cpt_db, 'keyword_index') and term in self.cpt_db.keyword_index:
-                for code in self.cpt_db.keyword_index[term]:
-                    if code not in matched_codes:  # Skip already matched codes
-                        if code not in code_scores:
-                            code_scores[code] = 0
-                        code_scores[code] += 1
-        
-        # Add scored matches to results
-        for code, score in code_scores.items():
-            if score > 0:
-                results.append({
-                    "code": code,
-                    "description": self.cpt_db.code_descriptions.get(code, ""),
-                    "related_codes": self.cpt_db.related_codes.get(code, []),
-                    "match_quality": "keyword",
-                    "score": score
-                })
-                matched_codes.add(code)
-        
-        # Sort results by score (highest first)
-        results = sorted(results, key=lambda x: x.get('score', 0), reverse=True)
-        
-        return results
-    
-    def _get_procedure_explanation(self, query: str) -> str:
-        """
-        Get a general explanation about a procedure without asking for specific codes.
-        
-        Args:
-            query: The user's question or procedure description
-            
-        Returns:
-            General explanation about the procedure
+            Dictionary with search results
         """
         try:
-            # Create a message that asks for explanation only, not codes
-            messages = [
-                {
-                    "role": "system", 
-                    "content": "You are a medical expert who explains ENT procedures. Your task is to provide brief, accurate explanations of ENT procedures, diagnostic methods, or treatments. DO NOT mention or recommend any specific CPT codes."
-                },
-                {
-                    "role": "user", 
-                    "content": f"Please briefly explain this ENT query in 2-3 sentences: '{query}'. Focus only on what the procedure or condition involves, not on coding."
-                }
-            ]
+            # Use the search_codes method from CPTCodeDatabase which searches across all columns
+            limit = 10
+            results = self.cpt_db.search_codes(query, limit=limit)
+    
+            # Convert results to CPTCode objects, mapping Excel columns to expected fields
+            cpt_codes = []
+            for result in results:
+                # Map the Excel columns to our expected fields
+                code = result.get("CPT_code") or result.get("code")
+                description = result.get("description", "")
+                category = result.get("category", "")
+    
+                # Convert key_indicator to boolean (e.g., "Yes" becomes True)
+                key_indicator_raw = result.get("key_indicator", "No")
+                key_indicator = str(key_indicator_raw).strip().lower() in ("yes", "true", "1")
+    
+                # Get standard charge from the appropriate column (e.g., "standard_charge|gross")
+                standard_charge = result.get("standard_charge")
+    
+                # Create CPTCode object
+                cpt_code = CPTCode(
+                    code=str(code),
+                    description=description,
+                    related_codes=result.get("related_codes", []),
+                    category=category,
+                    key_indicator=key_indicator,
+                    standard_charge=float(standard_charge)
+                )
+                cpt_codes.append(cpt_code)
+    
+            # Create search result
+            search_result = CPTSearchResult(
+                codes=cpt_codes,
+                query=query,
+                total_results=len(results),
+            )
+    
+            return {"status": "success", "data": search_result.dict()}
+    
+        except Exception as e:
+            logger.error(f"Error searching for CPT codes: {e}")
+            return {
+                "status": "error",
+                "message": str(e),
+                "query": query,
+                "total_results": 0,
+                "codes": []
+            }
+    
+    def semantic_search(self, query: str, top_n: int = 10) -> List[Dict[str, Any]]:
+        """
+        Perform semantic search against CPT descriptions.
+        """
+        query_embedding = self.embed_model.encode([query])
+        distances, indices = self.faiss_index.search(query_embedding, top_n)
+        
+        results = []
+        for idx in indices[0]:
+            code_info = self.cpt_db.iloc[idx]
+            result = {
+                "code": str(code_info['CPT_code']),
+                "description": code_info['description'],
+                "category": code_info['category'],
+                "key_indicator": code_info.get('key_indicator', False),
+                "standard_charge": code_info.get('standard_charge', 0.0)
+            }
+            results.append(result)
+
+        return results
+    def health_check(self) -> Dict[str, Any]:
+        """
+        Get health and status information about the agent, including key indicator and standard charge metrics.
+        
+        Returns:
+            Dictionary with health information
+        """
+        try:
+            # Get database stats
+            db_stats = {}
+            # Change this line - use .empty attribute to check if DataFrame is empty
+            total_codes = len(self.cpt_db) if hasattr(self, 'cpt_db') and not self.cpt_db.empty else 0
             
-            # Get explanation from model
+            # Fix these lines too - you need to access these as DataFrame attributes, not properties
+            # If these are actually columns in your DataFrame:
+            key_indicators = self.cpt_db['key_indicator'].sum() if hasattr(self, 'cpt_db') and not self.cpt_db.empty else 0
+            standard_charges = len(self.cpt_db[self.cpt_db['standard_charge'] > 0]) if hasattr(self, 'cpt_db') and not self.cpt_db.empty else 0
+            
+            health = HealthCheck(
+                status="healthy",
+                model=self.model_name,
+                database=self.cpt_db_path,
+                database_version=getattr(self.cpt_db, "version", "Unknown"),
+                codes_loaded=total_codes,
+                key_indicators_loaded=key_indicators,
+                standard_charges_loaded=standard_charges
+            )
+            
+            return health.dict()
+        
+        except Exception as e:
+            logger.error(f"Error in health check: {e}")
+            return {
+                "status": "error",
+                "message": str(e),
+                "model": self.model_name,
+                "database": self.cpt_db_path,
+                "codes_loaded": 0
+            }
+            
+    
+    def get_method_for_attribute(self, obj, attribute_name):
+        """
+        Helper method to find a method that might have a different name but related function.
+        """
+        possible_methods = [
+            attribute_name,
+            f"get_{attribute_name}",
+            f"get_{attribute_name}s",
+            f"list_{attribute_name}s",
+            f"list_{attribute_name}"
+        ]
+        
+        for method_name in possible_methods:
+            if hasattr(obj, method_name) and callable(getattr(obj, method_name)):
+                return getattr(obj, method_name)
+        
+        return None
+        
+    def process_query(self, query: str, conversation=None) -> str:
+        logger.info(f"Processing query with semantic search: {query}")
+        try:
+            # Get conversation history if available
+            messages = []
+            
+            # Step 1: Semantic search for CPT codes
+            top_matches = self.semantic_search(query, top_n=15)
+
+            # Format DB results into prompt
+            db_prompt = "\n".join(
+                f"- Code: {code['code']}, Description: {code['description']}, "
+                f"Category: {code['category']}, "
+                f"Key Indicator: {'Yes' if code['key_indicator'] else 'No'}, "
+                f"Standard Charge: ${code['standard_charge']:.2f}"
+                for code in top_matches
+            )
+            
+            # Enhanced system message with semantic search results
+            system_message = (
+                "You are the ENT CPT Code Agent, an AI specializing in ENT CPT coding. "
+                "Using the following relevant CPT codes identified by semantic search, "
+                "select and recommend MULTIPLE appropriate codes that could be applicable to the procedure:\n"
+                f"{db_prompt}\n\n"
+                "Always provide at least 2-3 possible CPT codes with explanations for each. "
+                "Start with the most appropriate code, then provide alternatives that could also apply. "
+                "Prioritize Key Indicator codes, but include other relevant options. "
+                "Format your response with clear headings for each CPT code option (e.g., 'OPTION 1: CPT 42420', 'OPTION 2: CPT 42425'). "
+                "Always include the CPT code numbers in your response, and explain when each would be appropriate."
+            )
+
+            # If we have a conversation with history, extract previous messages
+            if conversation:
+                # Try different approaches to get messages
+                get_messages_method = self.get_method_for_attribute(conversation, "messages")
+                
+                conversation_messages = []
+                if get_messages_method:
+                    # Try to get messages using the method we found
+                    try:
+                        conversation_messages = get_messages_method()
+                    except:
+                        # If it fails as a method, try it as an attribute
+                        if hasattr(conversation, 'messages'):
+                            conversation_messages = conversation.messages
+                elif hasattr(conversation, 'messages'):
+                    conversation_messages = conversation.messages
+                
+                if conversation_messages:
+                    # Check if we already have a system message
+                    has_system = False
+                    for msg in conversation_messages:
+                        if isinstance(msg, dict) and msg.get('role') == 'system':
+                            has_system = True
+                            break
+                    
+                    # Add system message if not already present
+                    if not has_system:
+                        messages.append({"role": "system", "content": system_message})
+                    
+                    # Add all conversation messages
+                    for msg in conversation_messages:
+                        if isinstance(msg, dict):
+                            role = msg.get('role')
+                            content = msg.get('content')
+                            
+                            # Skip system messages as we've already handled them
+                            if role == 'system':
+                                continue
+                                
+                            # Only include user and assistant messages
+                            if role in ['user', 'assistant'] and content:
+                                messages.append({"role": role, "content": content})
+                    
+                    # Add the new user query if it's not the last user message
+                    if not messages or messages[-1].get('role') != 'user':
+                        messages.append({"role": "user", "content": query})
+                else:
+                    # No conversation messages found, create new
+                    messages = [
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": query}
+                    ]
+            else:
+                # No conversation object, create new messages
+                messages = [
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": query}
+                ]
+            
+            # Make a simple LLM call without tools, with slightly higher temperature for diverse responses
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,
-                temperature=0.3,  # Lower temperature for more factual response
-                max_tokens=150    # Limit token count for brief response
+                temperature=self.model_temperature,
+                max_tokens=self.model_max_tokens
             )
             
-            explanation = response.choices[0].message.content.strip()
+            final_response = response.choices[0].message.content
             
-            # Remove any mention of CPT codes that might have slipped through
-            explanation = re.sub(r'\b\d{5}\b', '[code]', explanation)
+            # Extract CPT codes from the final response
+            cpt_codes = self.extract_cpt_codes(final_response)
             
-            return explanation
+            # Log the identified codes for reference
+            logger.info(f"Semantic search identified codes: {[c['code'] for c in top_matches]}")
+
+            # Add to conversation history if provided
+            if conversation and hasattr(conversation, 'add_message'):
+                conversation.add_message("assistant", final_response, cpt_codes)
             
+            return final_response
+
         except Exception as e:
-            logger.error(f"Error getting procedure explanation: {e}")
-            return "This query relates to ENT (Ear, Nose, Throat) procedures. I'll provide relevant codes from our verified database."
-    
-    def process_query(self, query: str, conversation=None) -> str:
-        """
-        Process a query with direct database lookup for guaranteed accuracy.
-        
-        Args:
-            query: The user's question or procedure description
-            conversation: Optional Conversation object
+            logger.error(f"Semantic search or processing error: {e}")
+            error_response = f"I apologize, but I encountered an error while processing your query: {str(e)}"
             
-        Returns:
-            Response with verified CPT codes directly from the database
-        """
-        logger.info(f"Processing query: {query}")
-        query_lower = query.lower()
-        
-        # Step 1: Find relevant CPT codes from the database
-        relevant_codes = self._search_codes(query)
-        
-        # If no codes found, try additional keyword extraction
-        if not relevant_codes:
-            keywords = []
+            # Add to conversation history if provided
+            if conversation and hasattr(conversation, 'add_message'):
+                conversation.add_message("assistant", error_response)
             
-            # Check for specific ENT procedures or terms in the query
-            all_ent_keywords = [
-                # Ear procedures
-                "tympano", "myringotomy", "mastoid", "mastoidectomy", "tympanoplasty", 
-                "ossicular", "stapedectomy", "cochlear", "labyrinth", "vestibular", "temporal",
-                
-                # Nose procedures
-                "rhinoplasty", "septoplasty", "septum", "turbinate", "nasal", "turbinectomy",
-                "polypectomy", "rhinectomy", "epistaxis",
-                
-                # Sinus procedures
-                "sinus", "sinusotomy", "sinusectomy", "maxillary", "frontal", "ethmoid", "sphenoid",
-                "antrostomy", "endoscopic", "fess", "antral",
-                
-                # Throat/pharynx
-                "pharynx", "pharyngeal", "uvula", "uvulectomy", "palate", "palatoplasty",
-                "oropharynx", "nasopharynx", "hypopharynx",
-                
-                # Tonsil and adenoid
-                "tonsil", "tonsillectomy", "adenoid", "adenoidectomy", "adenotonsillectomy",
-                
-                # Larynx
-                "larynx", "laryngoscopy", "laryngoplasty", "laryngectomy", "cordectomy",
-                "arytenoid", "vocal", "cord", "tracheostomy", "tracheotomy",
-                
-                # Salivary glands
-                "parotid", "parotidectomy", "submandibular", "sublingual", "salivary", "sialolithotomy",
-                "sialoadenectomy", "sialography", "sialendoscopy",
-                
-                # Facial nerve
-                "facial", "nerve", "nervectomy", "decompression", "neurolysis", "neuroplasty",
-                
-                # Thyroid and parathyroid
-                "thyroid", "thyroidectomy", "parathyroid", "parathyroidectomy", "lobectomy",
-                
-                # Common procedure types
-                "biopsy", "excision", "incision", "drainage", "removal", "aspiration", "resection",
-                "reconstruction", "repair", "partial", "total", "ligation", "cauterization",
-                "exploration", "debridement", "dilation"
-            ]
-            
-            for keyword in all_ent_keywords:
-                if keyword in query_lower:
-                    keywords.append(keyword)
-            
-            # Search for each extracted keyword
-            for keyword in keywords:
-                keyword_results = self._search_codes(keyword)
-                relevant_codes.extend(keyword_results)
-        
-        # Step 2: Get a general explanation from the LLM
-        explanation = self._get_procedure_explanation(query)
-        
-        # Step 3: Format the response
-        response = f"**{query}**\n\n"
-        response += f"{explanation}\n\n"
-        
-        # Add the CPT codes section
-        if relevant_codes:
-            response += "**Verified CPT Codes from Database:**\n"
-            
-            # Remove duplicates while preserving order
-            seen_codes = set()
-            unique_codes = []
-            for code_info in relevant_codes:
-                code = code_info["code"]
-                if code not in seen_codes:
-                    seen_codes.add(code)
-                    unique_codes.append(code_info)
-            
-            # Sort by match quality and score
-            unique_codes.sort(key=lambda x: (
-                0 if x.get('match_quality') == 'exact' else 1,
-                -x.get('score', 0)
-            ))
-            
-            # Display sorted codes (limit to top 10)
-            for i, code_info in enumerate(unique_codes[:10], 1):
-                code = code_info["code"]
-                description = code_info["description"]
-                related_codes = code_info.get("related_codes", [])
-                
-                response += f"{i}. **{code}**: {description}\n"
-                
-                # Add related codes if any
-                if related_codes:
-                    related_desc = []
-                    for rel_code in related_codes[:3]:  # Limit to 3 related codes
-                        rel_description = self.cpt_db.code_descriptions.get(rel_code, "")
-                        if rel_description:
-                            related_desc.append(f"{rel_code} ({rel_description})")
-                        else:
-                            related_desc.append(rel_code)
-                    
-                    if related_desc:
-                        response += f"   Related codes: {', '.join(related_desc)}\n"
-        else:
-            response += "**No specific CPT codes found in our database for this query.**\n"
-            response += "Please try rephrasing with more specific ENT procedure terminology.\n"
-        
-        # Add coding guidance
-        response += "\n**Coding Guidance:**\n"
-        response += "- Select the code that most accurately describes the specific procedure performed\n"
-        response += "- Check if any modifiers apply (e.g., -50 for bilateral procedures)\n"
-        response += "- Ensure documentation in the medical record supports the selected code\n"
-        
-        # Add note about verification
-        response += "\n*All CPT codes provided are directly verified from our CPT code database.*"
-        
-        # Add to conversation history if provided
-        if conversation and hasattr(conversation, 'add_message'):
-            conversation.add_message("assistant", response)
-        
-        return response
+            return error_response
     
     def extract_cpt_codes(self, text: str) -> List[str]:
         """Extract CPT codes from text."""
@@ -396,3 +495,51 @@ class ENTCPTAgent:
         pattern = r'\b\d{5}(?:-\d{1,2})?\b'
         matches = re.findall(pattern, text)
         return matches
+    
+    def run_interactive_session(self):
+        """Run an interactive session with the agent, highlighting key indicators and standard charges."""
+        print("\nENT CPT Code Agent v2.1 Interactive Session")
+        print("Enhanced with key indicator prioritization and standard charge information")
+        print("Type 'exit' to quit\n")
+        
+        while True:
+            try:
+                query = input("Query > ")
+                if query.lower() in ['exit', 'quit']:
+                    break
+                
+                print("\nProcessing...")
+                response = self.process_query(query)
+                print(f"\n{response}\n")
+                
+                # Extract and display CPT codes with their key indicator and standard charge status
+                cpt_codes = self.extract_cpt_codes(response)
+                if cpt_codes:
+                    print("CPT Codes Summary:")
+                    for code in cpt_codes:
+                        # Handle codes with modifiers
+                        base_code = code.split('-')[0]
+                        
+                        # Get code details
+                        details = self.cpt_db.get_code_details(base_code)
+                        if "error" not in details:
+                            description = details.get("description", "")
+                            key_indicator = details.get("key_indicator", False)
+                            standard_charge = details.get("standard_charge", 0.0)
+                            
+                            # Format the display
+                            ki_status = "✓ KEY INDICATOR" if key_indicator else ""
+                            charge_info = f"${standard_charge:.2f}" if standard_charge > 0 else "N/A"
+                            
+                            print(f"- {code}: {description}")
+                            if ki_status:
+                                print(f"  {ki_status}")
+                            print(f"  Standard Charge: {charge_info}")
+                            print()
+                
+            except KeyboardInterrupt:
+                print("\nSession terminated by user")
+                break
+            except Exception as e:
+                print(f"\nError: {e}")
+                continue

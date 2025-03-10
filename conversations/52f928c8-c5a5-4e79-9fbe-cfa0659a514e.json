@@ -1,0 +1,53 @@
+{
+  "session_id": "52f928c8-c5a5-4e79-9fbe-cfa0659a514e",
+  "metadata": {
+    "session_id": "52f928c8-c5a5-4e79-9fbe-cfa0659a514e",
+    "start_time": "2025-03-09T19:34:35.438291",
+    "total_messages": 6,
+    "total_codes_identified": 4
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:34:38.464773"
+    },
+    {
+      "role": "assistant",
+      "content": "The appropriate CPT code for a partial parotidectomy with extracapsular dissection, preserving the facial nerve, would be **42415** (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve).",
+      "timestamp": "2025-03-09T19:34:40.591631",
+      "codes": [
+        "42415"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "The appropriate CPT code for a partial parotidectomy with extracapsular dissection, preserving the facial nerve, would be **42415** (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve).",
+      "timestamp": "2025-03-09T19:34:40.591795",
+      "codes": [
+        "42415"
+      ]
+    },
+    {
+      "role": "user",
+      "content": "what if I traced out the main trunk of the facial nerve?",
+      "timestamp": "2025-03-09T19:34:59.166300"
+    },
+    {
+      "role": "assistant",
+      "content": "If you performed a procedure involving the main trunk of the facial nerve, such as decompression or repair, the most appropriate CPT code would be **69955** (Total facial nerve decompression and/or repair). This code covers procedures that may include grafting and is suitable for interventions on the main trunk of the facial nerve.",
+      "timestamp": "2025-03-09T19:35:02.853858",
+      "codes": [
+        "69955"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "If you performed a procedure involving the main trunk of the facial nerve, such as decompression or repair, the most appropriate CPT code would be **69955** (Total facial nerve decompression and/or repair). This code covers procedures that may include grafting and is suitable for interventions on the main trunk of the facial nerve.",
+      "timestamp": "2025-03-09T19:35:02.853902",
+      "codes": [
+        "69955"
+      ]
+    }
+  ]
+}

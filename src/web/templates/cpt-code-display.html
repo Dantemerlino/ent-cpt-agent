@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENT CPT Code Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Enhanced code pill styles for the detected codes panel */
+        .enhanced-code-pill {
+            border-left: 3px solid #1a73e8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            display: block;
+            width: 100%;
+        }
+        .enhanced-code-pill .code-number {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+        .code-pill-info {
+            display: block;
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 2px;
+        }
+        .code-pill-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 1px 5px;
+            border-radius: 10px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        .key-indicator-badge {
+            background-color: #ffd700;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Enhanced CPT Code Display</h2>
+        
+        <div class="row">
+            <!-- Standard Code Pill (Old Style) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Standard Code Display (Before)</div>
+                    <div class="card-body">
+                        <div class="code-pill" data-code="42420">42420</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enhanced Code Pill (New Style) -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Enhanced Code Display (After)</div>
+                    <div class="card-body">
+                        <div class="enhanced-code-pill" data-code="42420">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="code-number">42420 <span class="code-pill-badge key-indicator-badge">KEY</span></span>
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="code-pill-info">Standard Charge: $7580.00</div>
+                            <div class="code-pill-info text-truncate">Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve</div>
+                        </div>
+                        
+                        <div class="enhanced-code-pill mt-3" data-code="42415">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="code-number">42415</span>
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="code-pill-info">Standard Charge: $6380.00</div>
+                            <div class="code-pill-info text-truncate">Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve</div>
+                        </div>
+                        
+                        <div class="enhanced-code-pill mt-3" data-code="42410">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="code-number">42410</span>
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="code-pill-info">Standard Charge: $5380.00</div>
+                            <div class="code-pill-info text-truncate">Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <h5>Implementation Details</h5>
+            <p>The enhanced code display includes:</p>
+            <ul>
+                <li>The CPT code number with a visual highlight</li>
+                <li>A "KEY" badge for key indicator procedures</li>
+                <li>Standard charge amount with currency formatting</li>
+                <li>Procedure description with text truncation for longer descriptions</li>
+                <li>A validation button that allows users to quickly look up more details</li>
+            </ul>
+            <p>This implementation improves the user experience by providing all relevant information directly in the detected codes panel.</p>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

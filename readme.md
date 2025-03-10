@@ -1,6 +1,18 @@
-# ENT CPT Code Agent
+# ENT CPT Code Agent v2.0
 
-An AI-powered assistant for ENT (Ear, Nose, Throat) CPT code selection and validation.
+An enhanced AI-powered assistant for ENT (Ear, Nose, Throat) CPT code selection and validation using LM Studio's advanced capabilities.
+
+## What's New in Version 2.0
+
+The ENT CPT Code Agent has been completely rebuilt to leverage the latest features from LM Studio:
+
+- **Agent-Based Architecture**: Uses "tools" to perform specialized functions like code search, validation, and analysis
+- **Structured Output**: Returns well-structured data for better integration with other systems
+- **Enhanced CPT Database Handling**: More robust detection of CPT codes with flexible column naming
+- **Improved Rules Engine**: Better handling of bundled codes, bilateral procedures, and other coding rules
+- **Streaming Support**: Real-time response generation for a better user experience
+- **OpenAI API Compatibility**: Works with any client that uses the OpenAI API format
+- **Advanced Error Handling**: More resilient to missing files and corrupt data
 
 ## Overview
 
@@ -9,54 +21,21 @@ The ENT CPT Code Agent is a comprehensive tool designed to help medical professi
 ## Features
 
 - **Natural Language Understanding**: Describe procedures in plain English and get accurate code recommendations
-- **CPT Code Search**: Search for codes based on keywords or descriptions
+- **CPT Code Search**: Search for codes based on keywords or descriptions with enhanced matching
 - **Code Validation**: Verify if a CPT code is valid and appropriate for a given procedure
 - **Procedure Analysis**: Analyze detailed procedure descriptions to determine the correct codes
+- **Code Comparison**: Compare two CPT codes and get explanations of their differences
 - **Educational Guidance**: Learn about coding rules, modifiers, and best practices
-- **Multiple Interfaces**: Command-line, Web UI, and API options for different usage scenarios
+- **Multiple Interfaces**: Command-line, Web UI, and comprehensive API options
 - **Conversation History**: Save and review past conversations for reference
-
-## Project Structure
-
-```
-ent-cpt-agent/
-├── config.json               # Configuration file
-├── data/                     # Data directory
-│   └── CPT codes for ENT.xlsx # CPT code database
-├── src/                      # Source code
-│   ├── __init__.py           # Package marker
-│   ├── main.py               # Main entry point
-│   ├── agent/                # Agent components
-│   │   ├── __init__.py
-│   │   ├── cpt_database.py   # CPT code database handler
-│   │   ├── ent_cpt_agent.py  # Main agent implementation
-│   │   └── rules_engine.py   # Rule-based code selection logic
-│   ├── api/                  # API components
-│   │   ├── __init__.py
-│   │   └── api_interface.py  # API interface implementation
-│   ├── config/               # Configuration handling
-│   │   ├── __init__.py
-│   │   └── agent_config.py   # Configuration manager
-│   ├── conversation/         # Conversation handling
-│   │   ├── __init__.py
-│   │   └── conversation_manager.py # Conversation state management
-│   └── web/                  # Web interface
-│       ├── __init__.py
-│       ├── web_ui.py         # Web UI implementation
-│       └── templates/        # Web templates
-│           ├── __init__.py
-│           ├── app.py        # Flask application
-│           └── index.html    # Main HTML template
-├── run_web_ui.py            # Web UI runner script
-└── requirements.txt         # Python dependencies
-```
+- **Streaming Responses**: Get results in real-time as they're being generated
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.8+
-- LM Studio desktop application
+- LM Studio desktop application with a suitable model
 - CPT codes database (Excel format)
 
 ### Step 1: Set Up Environment
@@ -67,7 +46,8 @@ git clone https://github.com/dantemerlino/ent-cpt-agent.git
 cd ent-cpt-agent
 
 # Create a virtual environment
-python -m venv venv
+cd ent-cpt-agent
+# python -m venv venv # Only do this the first time you make your virtual environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
@@ -77,7 +57,9 @@ pip install -r requirements.txt
 ### Step 2: Configure LM Studio
 
 1. Install LM Studio from the [official website](https://lmstudio.ai/)
-2. Launch LM Studio and download a suitable model (default: qwen2.5-14b-instruct)
+2. Launch LM Studio and download a suitable model:
+   - Recommended: qwen2.5-14b-instruct (best performance)
+   - Alternatives: Llama 3.1-70B, DeepSeek R1 Distill-7B
 3. Start the LM Studio server:
    ```bash
    lms server start
@@ -86,24 +68,37 @@ pip install -r requirements.txt
 ### Step 3: Prepare CPT Database
 
 1. Place your "CPT codes for ENT.xlsx" file in the `data/` directory
-2. Ensure the Excel file has the required columns: CPT Code, Description, Category, Related Codes
+2. Ensure the Excel file has the required columns: CPT Code (or similar), Description, Category, Related Codes
 
 ### Step 4: Initialize Configuration
 
 ```bash
 # Initialize default configuration
-python -m src.main init
+cp config-example.json config.json
 ```
 
-This creates a `config.json` file with default settings. You can edit this file to adjust:
+Edit the `config.json` file to adjust:
 - The model name and parameters
 - The path to the CPT database file
 - Conversation storage settings
 - Server host and port settings
+- Tool configurations
 
 ## Usage
 
+### Web UI Mode
+
+The easiest way to use the ENT CPT Code Agent is through the Web UI:
+
+```bash
+python run_web_ui.py
+```
+
+This starts the web interface server. Navigate to http://localhost:5000 to access the web UI.
+
 ### Interactive Mode
+
+For command-line usage:
 
 ```bash
 python -m src.main interactive
@@ -113,19 +108,13 @@ This starts an interactive session where you can ask questions about ENT procedu
 
 ### API Server Mode
 
+To use the agent as an API server:
+
 ```bash
 python -m src.main server --host localhost --port 8000
 ```
 
 This starts the API server, allowing you to integrate the agent with other applications.
-
-### Web UI
-
-```bash
-python run_web_ui.py
-```
-
-This starts the web interface server. Navigate to http://localhost:5000 to access the web UI.
 
 ### Single Query Mode
 
@@ -134,6 +123,169 @@ python -m src.main query "What is the CPT code for bilateral myringotomy with tu
 ```
 
 This processes a single query and exits, useful for scripts and automation.
+
+## API Documentation
+
+The ENT CPT Code Agent v2.0 provides a comprehensive API for integration with other applications.
+
+### Standard API Endpoints
+
+#### Query Endpoint
+
+```
+POST /api/query
+```
+
+Request body:
+```json
+{
+  "query": "What is the CPT code for tonsillectomy?",
+  "session_id": "optional-session-id",
+  "stream": false
+}
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "message": "The CPT code for tonsillectomy depends on the patient's age...",
+  "data": {
+    "codes": ["42820", "42821"]
+  },
+  "session_id": "session-id"
+}
+```
+
+#### Search Endpoint
+
+```
+POST /api/search
+```
+
+Request body:
+```json
+{
+  "search_term": "endoscopy",
+  "limit": 10
+}
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "data": {
+    "codes": [
+      {
+        "code": "31231",
+        "description": "Nasal endoscopy, diagnostic",
+        "related_codes": ["31233", "31235"]
+      },
+      // More codes...
+    ],
+    "total_results": 10
+  }
+}
+```
+
+#### Validate Endpoint
+
+```
+POST /api/validate
+```
+
+Request body:
+```json
+{
+  "code": "31231"
+}
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "message": "Nasal endoscopy, diagnostic",
+  "data": {
+    "valid": true,
+    "code": "31231",
+    "description": "Nasal endoscopy, diagnostic"
+  }
+}
+```
+
+#### Analyze Endpoint
+
+```
+POST /api/analyze
+```
+
+Request body:
+```json
+{
+  "procedure_text": "Bilateral myringotomy with tube insertion",
+  "candidate_codes": ["69433", "69436"]
+}
+```
+
+Response:
+```json
+{
+  "status": "success",
+  "data": {
+    "procedure": "Bilateral myringotomy with tube insertion",
+    "recommended_codes": [
+      {
+        "code": "69436-50",
+        "description": "Tympanostomy with tubes, bilateral",
+        "category": "Ear",
+        "related_codes": ["69433"],
+        "recommended": true,
+        "reason": "Primary recommended code"
+      }
+    ],
+    "excluded_codes": [
+      {
+        "code": "69433",
+        "description": "Tympanostomy with tubes, unilateral",
+        "category": "Ear",
+        "related_codes": [],
+        "recommended": false,
+        "reason": "Bundled with another code"
+      }
+    ],
+    "bilateral": true,
+    "multiple_procedures": false,
+    "bundled_codes": true,
+    "explanation": "Analysis of: 'Bilateral myringotomy with tube insertion'..."
+  }
+}
+```
+
+### OpenAI API Compatibility
+
+The ENT CPT Code Agent also supports the OpenAI API format, allowing you to use it with any OpenAI-compatible client:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:5000/v1",
+    api_key="ent-cpt-agent-key"
+)
+
+completion = client.chat.completions.create(
+  model="qwen2.5-14b-instruct",
+  messages=[
+    {"role": "system", "content": "You are a medical coding expert."},
+    {"role": "user", "content": "What is the CPT code for bilateral myringotomy with tube insertion?"}
+  ],
+  temperature=0.2,
+)
+
+print(completion.choices[0].message.content)
+```
 
 ## Example Queries
 
@@ -198,20 +350,7 @@ The web interface can be customized by modifying:
 
 ### Adding Custom Rules
 
-The `RulesEngine` class in `src/agent/rules_engine.py` can be extended with new rules:
-
-```python
-# Example: Add a new rule for modifier 59
-rule = CodeRule(
-    rule_id="R006",
-    description="Check for distinct procedural services (modifier 59)",
-    conditions=[
-        {"type": "distinct_procedure", "keywords": ["separate", "distinct", "different site"]}
-    ],
-    priority=5
-)
-rules_engine.add_rule(rule)
-```
+The Rules Engine can be extended with new rules by modifying the `initialize_rules` method in `src/agent/rules_engine.py`.
 
 ### Environment Variables
 
@@ -221,233 +360,8 @@ The following environment variables can be used to configure the application:
 - `WEB_PORT`: Port for the web UI server (default: `5000`)
 - `WEB_HOST`: Host for the web UI server (default: `0.0.0.0`)
 - `DEBUG`: Enable debug mode (default: `False`)
-
-## API Documentation
-
-The ENT CPT Code Agent provides a RESTful API for integration with other applications.
-
-### Authentication
-
-Currently, the API does not require authentication. For production use, consider adding API key validation.
-
-### API Endpoints
-
-#### Query Endpoint
-
-```
-POST /api/query
-```
-
-Request body:
-```json
-{
-  "query": "What is the CPT code for tonsillectomy?",
-  "session_id": "optional-session-id"
-}
-```
-
-Response:
-```json
-{
-  "status": "success",
-  "message": "The CPT code for tonsillectomy depends on the patient's age...",
-  "data": {
-    "codes": ["42820", "42821"]
-  },
-  "session_id": "session-id"
-}
-```
-
-#### Search Endpoint
-
-```
-POST /api/search
-```
-
-Request body:
-```json
-{
-  "search_term": "endoscopy"
-}
-```
-
-Response:
-```json
-{
-  "status": "success",
-  "data": {
-    "codes": [
-      {
-        "code": "31231",
-        "description": "Nasal endoscopy, diagnostic",
-        "related_codes": ["31233", "31235"]
-      },
-      // More codes...
-    ],
-    "count": 10
-  }
-}
-```
-
-#### Validate Endpoint
-
-```
-POST /api/validate
-```
-
-Request body:
-```json
-{
-  "code": "31231"
-}
-```
-
-Response:
-```json
-{
-  "status": "success",
-  "message": "Nasal endoscopy, diagnostic",
-  "data": {
-    "valid": true,
-    "description": "Nasal endoscopy, diagnostic"
-  }
-}
-```
-
-#### Analyze Endpoint
-
-```
-POST /api/analyze
-```
-
-Request body:
-```json
-{
-  "procedure_text": "Bilateral myringotomy with tube insertion",
-  "candidate_codes": ["69433", "69436"]
-}
-```
-
-Response:
-```json
-{
-  "status": "success",
-  "data": {
-    "status": "success",
-    "procedure_text": "Bilateral myringotomy with tube insertion",
-    "recommended_codes": ["69436"],
-    "excluded_codes": ["69433"],
-    "explanations": [
-      {
-        "rule_id": "R002",
-        "code": "69436",
-        "message": "Code 69436 is appropriate for bilateral myringotomy with tube insertion under general anesthesia."
-      }
-    ]
-  }
-}
-```
-
-#### Health Check Endpoint
-
-```
-GET /api/health
-```
-
-Response:
-```json
-{
-  "status": "success",
-  "message": "Service is healthy",
-  "details": {
-    "model": "qwen2.5-14b-instruct",
-    "database": "data/CPT codes for ENT.xlsx",
-    "conversation_dir": "conversations"
-  }
-}
-```
-
-## Integration Examples
-
-### Python
-
-```python
-import requests
-import json
-
-API_URL = "http://localhost:8000/api"
-
-# Query the agent
-response = requests.post(
-    f"{API_URL}/query",
-    json={
-        "query": "What is the CPT code for septoplasty?",
-        "session_id": None
-    }
-)
-result = response.json()
-print(result["message"])
-
-# Use the returned session ID for follow-up questions
-session_id = result["session_id"]
-response = requests.post(
-    f"{API_URL}/query",
-    json={
-        "query": "What if it's combined with turbinate reduction?",
-        "session_id": session_id
-    }
-)
-print(response.json()["message"])
-```
-
-### JavaScript
-
-```javascript
-async function queryAgent(question, sessionId = null) {
-  const response = await fetch('http://localhost:8000/api/query', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      query: question,
-      session_id: sessionId
-    })
-  });
-  
-  return await response.json();
-}
-
-// Example usage
-async function main() {
-  const result = await queryAgent('What is the CPT code for nasal endoscopy?');
-  console.log(result.message);
-  
-  // Use the returned session ID for follow-up questions
-  const sessionId = result.session_id;
-  const followUp = await queryAgent('What if a biopsy is taken?', sessionId);
-  console.log(followUp.message);
-}
-
-main();
-```
-
-## Extending the Project
-
-The ENT CPT Code Agent is designed to be extensible. Here are some ways to enhance it:
-
-1. **Add Support for More Specialties**: Adapt the framework to support other medical specialties beyond ENT.
-
-2. **Enhance the Database**: Add more fields to the CPT code database, such as:
-   - Reimbursement rates
-   - Payer-specific guidelines
-   - Historical coding data
-
-3. **Integrate with EMR Systems**: Add connectors to popular Electronic Medical Record systems.
-
-4. **Improve Model Capabilities**: Fine-tune the language model on medical coding scenarios.
-
-5. **Add User Authentication**: Implement user accounts and secure API access.
+- `CPT_DB_PATH`: Path to the CPT database file (overrides config)
+- `MODEL_NAME`: Name of the model to use (overrides config)
 
 ## Contributing
 

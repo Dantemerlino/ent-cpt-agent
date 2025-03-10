@@ -1,0 +1,42 @@
+{
+  "session_id": "b2233b46-2c36-4fc4-bc6b-d42c07d5b517",
+  "metadata": {
+    "session_id": "b2233b46-2c36-4fc4-bc6b-d42c07d5b517",
+    "start_time": "2025-03-09T19:26:06.702080",
+    "total_messages": 5,
+    "total_codes_identified": 2
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "how do I code a partial parotidectomy?",
+      "timestamp": "2025-03-09T19:26:13.647593"
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the provided CPT codes, the most appropriate code for a partial parotidectomy (which typically involves excision of the lateral lobe) would be:\n\n- **Code: 42415**  \n  - Description: Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve\n  - Category: Parotid\n  - Key Indicator: Yes\n\nThis code is recommended because it specifically mentions the excision of the lateral lobe of the parotid gland while preserving the facial nerve, which aligns well with a partial parotidectomy procedure.",
+      "timestamp": "2025-03-09T19:26:19.085844",
+      "codes": [
+        "42415"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the provided CPT codes, the most appropriate code for a partial parotidectomy (which typically involves excision of the lateral lobe) would be:\n\n- **Code: 42415**  \n  - Description: Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve\n  - Category: Parotid\n  - Key Indicator: Yes\n\nThis code is recommended because it specifically mentions the excision of the lateral lobe of the parotid gland while preserving the facial nerve, which aligns well with a partial parotidectomy procedure.",
+      "timestamp": "2025-03-09T19:26:19.086054",
+      "codes": [
+        "42415"
+      ]
+    },
+    {
+      "role": "user",
+      "content": "what if I don't find the main trunk of the facial nerve?",
+      "timestamp": "2025-03-09T19:26:46.211773"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: 'NoneType' object is not callable",
+      "timestamp": "2025-03-09T19:26:58.208666"
+    }
+  ]
+}

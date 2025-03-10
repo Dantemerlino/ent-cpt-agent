@@ -1,21 +1,24 @@
-Directory listing for: ent-cpt-agent
+Directory listing for: /Users/dantemacstudio/Desktop/Claude_playground/ent-cpt-agent
 ============================================================
 
 [DIR] .
   - project-summary.md (6519 bytes)
+  - .DS_Store (6148 bytes)
   - requirements.txt (103 bytes)
   - run_web_ui.py (1001 bytes)
-  - config.json (564 bytes)
-  - CPT codes for ENT.xlsx (18430 bytes)
+  - listfiles.py (2414 bytes)
+  - config.json (1792 bytes)
   - system-architecture.svg (4298 bytes)
-  - readme.md (12179 bytes)
+  - readme.md (10368 bytes)
   - setup.py (1155 bytes)
+  - .gitignore (144 bytes)
   - directory_contents.txt (0 bytes)
+  - directory_contents.json (384707 bytes)
 
 [DIR] tests
-  - test_rules_engine.py (7473 bytes)
+  - test_rules_engine.py (7311 bytes)
   - __init__.py (123 bytes)
-  - test_cpt_database.py (5187 bytes)
+  - test_cpt_database.py (5476 bytes)
 
 [DIR] docs
   - PROJECT_SUMMARY.md (6519 bytes)
@@ -23,30 +26,28 @@ Directory listing for: ent-cpt-agent
   - integration_flow.mermaid (1476 bytes)
   - api_docs.md (587 bytes)
   - usage_examples.md (27371 bytes)
-  - installation_guide.md (5782 bytes)
+  - installation_guide.md (5783 bytes)
 
 [DIR] conversations
-  - b667bbcc-5bb9-42f2-a4cf-013637803d3e.json (460 bytes)
-  - 42dd0d90-2a80-4bc1-98a0-890f8b662796.json (460 bytes)
 
 [DIR] scripts
   - install.sh (1381 bytes)
   - run_server.sh (1384 bytes)
 
-[DIR] data
-  - CPT codes for ENT.xlsx (18430 bytes)
-
 [DIR] src
+  - .DS_Store (6148 bytes)
   - __init__.py (125 bytes)
   - main.py (4898 bytes)
 
+[DIR] src/database
+
 [DIR] src/config
   - __init__.py (217 bytes)
-  - agent_config.py (29507 bytes)
+  - agent_config.py (5780 bytes)
 
 [DIR] src/web
   - __init__.py (127 bytes)
-  - web_ui.py (956 bytes)
+  - web_ui.py (3605 bytes)
 
 [DIR] src/web/templates
   - index.html (31533 bytes)
@@ -55,17 +56,18 @@ Directory listing for: ent-cpt-agent
   - error.html (3333 bytes)
 
 [DIR] src/agent
-  - ent_cpt_agent.py (23616 bytes)
+  - ent_cpt_agent.py (35431 bytes)
+  - ent_cpt_agent old.py (17653 bytes)
   - __init__.py (289 bytes)
-  - cpt_database.py (5966 bytes)
-  - rules_engine.py (10500 bytes)
+  - cpt_database.py (7991 bytes)
+  - rules_engine.py (14161 bytes)
   - conversation_manager.py (10219 bytes)
 
 [DIR] src/api
   - __init__.py (0 bytes)
-  - api_interface.py (11966 bytes)
+  - api_interface.py (25109 bytes)
 
 [DIR] src/conversation
   - __init__.py (243 bytes)
-  - conversation_manager.py (10219 bytes)
+  - conversation_manager.py (12589 bytes)
 

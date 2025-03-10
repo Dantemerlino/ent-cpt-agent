@@ -1,0 +1,77 @@
+/* Enhanced styles for CPT code display */
+
+/* Base code pill styling */
+.code-pill {
+    background-color: #e7f2fa;
+    color: #1a73e8;
+    border: 1px solid #c2e0f4;
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+}
+.code-pill:hover {
+    background-color: #d3e7f8;
+}
+
+/* Enhanced code pill container */
+.enhanced-code-pill {
+    border-left: 3px solid #1a73e8;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background-color: #f8f9fa;
+    display: block;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+.enhanced-code-pill:hover {
+    background-color: #eef2f6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* The code number styling */
+.enhanced-code-pill .code-number {
+    font-weight: bold;
+    color: #1a73e8;
+    font-size: 0.95rem;
+}
+
+/* Additional information about the code */
+.code-pill-info {
+    display: block;
+    font-size: 0.7rem;
+    color: #555;
+    margin-top: 2px;
+}
+
+/* Key indicator and other badges */
+.code-pill-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* Special styling for key indicator badge */
+.key-indicator-badge {
+    background-color: #ffd700;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Making sure truncated text shows an ellipsis */
+.text-truncate {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}

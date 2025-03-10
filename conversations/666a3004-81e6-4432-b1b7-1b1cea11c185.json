@@ -1,0 +1,21 @@
+{
+  "session_id": "666a3004-81e6-4432-b1b7-1b1cea11c185",
+  "metadata": {
+    "session_id": "666a3004-81e6-4432-b1b7-1b1cea11c185",
+    "start_time": "2025-03-09T19:08:08.480963",
+    "total_messages": 2,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "how do I code a partial parotidectomy?",
+      "timestamp": "2025-03-09T19:08:13.600851"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: 'ENTCPTAgent' object has no attribute 'procedure_search'",
+      "timestamp": "2025-03-09T19:08:24.769828"
+    }
+  ]
+}

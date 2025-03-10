@@ -1,25 +1,79 @@
 {
-    "model": {
-      "name": "qwen2.5-14b-instruct",
-
-      "temperature": 0,
-      "max_tokens": 1024,
-      "context_length": 8192
-    },
-    "cpt_database": {
-      "file_path": "data/CPT codes for ENT.xlsx",
-      "sheet_name": "Sheet1"
-    },
-    "agent": {
-      "log_level": "INFO",
-      "save_conversations": true,
-      "conversation_dir": "conversations"
-    },
-    "server": {
-      "host": "localhost",
-      "port": 8000,
-      "enable_api": false,
-      "lm_studio_base_url": "http://localhost:1234/v1",
-      "lm_studio_api_key": "lm-studio"
+  "model": {
+    "name": "qwen2.5-14b-instruct",
+    "temperature": 0.2,
+    "max_tokens": 2048,
+    "context_length": 8192,
+    "structured_output": true,
+    "reasoning_enabled": true
+  },
+  "cpt_database": {
+    "file_path": "data/ALL_ENT_CPT_codes.xlsx",
+    "sheet_name": "Sheet1",
+    "backup_path": "data/backups",
+    "auto_update": false,
+    "cache_results": true
+  },
+  "agent": {
+    "log_level": "INFO",
+    "save_conversations": true,
+    "conversation_dir": "conversations",
+    "use_tools": true,
+    "max_tool_calls": 5,
+    "auto_correct": true
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "enable_api": true,
+    "api_key": "ent-cpt-agent-key",
+    "lm_studio_base_url": "http://localhost:1234/v1",
+    "lm_studio_api_key": "lm-studio",
+    "max_request_size": 10485760,
+    "timeout": 60,
+    "cors_origins": ["*"],
+    "rate_limit": {
+      "enabled": true,
+      "requests_per_minute": 60
     }
+  },
+  "web_ui": {
+    "theme": "light",
+    "max_history": 50,
+    "show_code_details": true,
+    "enable_code_export": true,
+    "display_related_codes": true,
+    "enable_search": true,
+    "enable_comparison": true,
+    "enable_analysis": true
+  },
+  "tools": {
+    "search_cpt_codes": {
+      "enabled": true,
+      "max_results": 10,
+      "fuzzy_matching": true
+    },
+    "validate_cpt_code": {
+      "enabled": true
+    },
+    "analyze_procedure": {
+      "enabled": true,
+      "max_candidates": 10
+    },
+    "get_explanation": {
+      "enabled": true,
+      "use_cache": true
+    },
+    "compare_codes": {
+      "enabled": true,
+      "use_cache": true
+    }
+  },
+  "features": {
+    "auto_suggest": true,
+    "code_highlighting": true,
+    "history_search": true,
+    "export_formats": ["json", "pdf", "csv"],
+    "notifications": true
   }
+}

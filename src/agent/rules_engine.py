@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional, Tuple
 import re
 import logging
 from dataclasses import dataclass
+import os
 
 logger = logging.getLogger("ent_cpt_agent.rules_engine")
 
@@ -28,6 +29,16 @@ class RulesEngine:
     
     def initialize_rules(self) -> None:
         """Load default rules for ENT CPT coding."""
+        # Highest priority: Prioritize key indicators and higher standard charges
+        self.rules.append(CodeRule(
+            rule_id="R000",
+            description="Prioritize key indicator codes and higher standard charges",
+            conditions=[
+                {"type": "key_indicator_priority"}
+            ],
+            priority=100  # Highest priority
+        ))
+        
         # Rule: Bundled procedures
         self.rules.append(CodeRule(
             rule_id="R001",
@@ -94,6 +105,60 @@ class RulesEngine:
         # Sort rules by priority (higher priority first)
         self.rules.sort(key=lambda r: r.priority, reverse=True)
         logger.info(f"Added rule: {rule}")
+    
+    def prioritize_by_key_indicator_and_charge(self, candidate_codes: List[str], 
+                                          code_db) -> Tuple[List[str], List[Dict[str, Any]]]:
+        """
+        Prioritize CPT codes based on key indicator status and standard charge.
+        
+        Args:
+            candidate_codes: List of potential CPT codes
+            code_db: Database of CPT codes
+            
+        Returns:
+            Tuple of (prioritized_codes, explanations)
+        """
+        if not candidate_codes:
+            return [], []
+        
+        # Get details for all candidate codes
+        code_details = []
+        for code in candidate_codes:
+            details = code_db.get_code_details(code)
+            if "error" not in details:
+                code_details.append(details)
+        
+        # Sort codes: first by key indicator (True first), then by standard charge (highest first)
+        code_details.sort(key=lambda x: (not x.get("key_indicator", False), -x.get("standard_charge", 0.0)))
+        
+        # Extract sorted codes
+        prioritized_codes = [details["code"] for details in code_details]
+        
+        # Generate explanations
+        explanations = []
+        for details in code_details[:3]:  # Only explain top 3 for brevity
+            code = details["code"]
+            key_indicator = details.get("key_indicator", False)
+            charge = details.get("standard_charge", 0.0)
+            
+            explanation = {
+                "rule_id": "R000",
+                "code": code,
+                "message": f"Code {code}"
+            }
+            
+            if key_indicator:
+                explanation["message"] += " is a key indicator"
+                if charge > 0:
+                    explanation["message"] += f" with standard charge ${charge:.2f}"
+            elif charge > 0:
+                explanation["message"] += f" has standard charge ${charge:.2f}"
+            else:
+                explanation["message"] += " evaluated based on priority rules"
+            
+            explanations.append(explanation)
+        
+        return prioritized_codes, explanations
     
     def evaluate_bundled_codes(self, procedure_text: str, candidate_codes: List[str], 
                                code_db) -> Tuple[List[str], List[str], List[Dict[str, Any]]]:
@@ -218,14 +283,19 @@ class RulesEngine:
         recommended_codes = candidate_codes.copy()
         excluded_codes = []
         explanations = []
-        modifiers = {}
         
         # Apply each rule in priority order
         for rule in self.rules:
             logger.info(f"Applying rule: {rule}")
             
             try:
-                if rule.rule_id == "R001":  # Bundled procedures
+                if rule.rule_id == "R000":  # Key indicator and standard charge prioritization
+                    rec, exp = self.prioritize_by_key_indicator_and_charge(
+                        recommended_codes, code_db)
+                    recommended_codes = rec
+                    explanations.extend(exp)
+                
+                elif rule.rule_id == "R001":  # Bundled procedures
                     rec, exc, exp = self.evaluate_bundled_codes(
                         procedure_text, recommended_codes, code_db)
                     recommended_codes = rec
@@ -290,5 +360,12 @@ class RulesEngine:
         
         if "endoscopic" in procedure_text.lower():
             tips.append("Endoscopic procedures often have specific bundling rules.")
+        
+        # NEW: Key indicator tip
+        key_indicator_tip = "This is a key indicator code and should be prioritized when applicable."
+        tips.append(key_indicator_tip)
+        
+        # NEW: Standard charge tip
+        tips.append("Consider the standard charge as an indicator of procedure complexity.")
         
         return tips

@@ -1,0 +1,21 @@
+{
+  "session_id": "84deec9b-1e3c-44cb-823a-eb715986042f",
+  "metadata": {
+    "session_id": "84deec9b-1e3c-44cb-823a-eb715986042f",
+    "start_time": "2025-03-09T18:55:40.823404",
+    "total_messages": 2,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T18:55:53.955767"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: name 'top_n' is not defined",
+      "timestamp": "2025-03-09T18:55:54.160707"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "session_id": "e5ea73e2-81be-48c4-870a-881051b1c089",
+  "metadata": {
+    "session_id": "e5ea73e2-81be-48c4-870a-881051b1c089",
+    "start_time": "2025-03-09T19:44:23.938711",
+    "total_messages": 6,
+    "total_codes_identified": 24
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:44:45.061497"
+    },
+    {
+      "role": "assistant",
+      "content": "For a procedure involving a partial parotidectomy with extracapsular dissection, the most relevant CPT codes are:\n\n### OPTION 1: CPT 42415 (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve)\n- **Description**: This code is used when a partial excision of the parotid gland includes the lateral lobe and involves careful dissection to preserve the facial nerve.\n- **Applicability**: If your procedure specifically involved the removal of the lateral lobe of the parotid gland with meticulous dissection around the facial nerve, this would be the most appropriate code.\n\n### OPTION 2: CPT 42410 (Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection)\n- **Description**: This code is used when a partial excision of the parotid gland includes the lateral lobe but does not specifically involve detailed dissection around the facial nerve.\n- **Applicability**: If your procedure involved removal of the lateral lobe and did not require extensive dissection to preserve the facial nerve, this would be an alternative option.\n\n### OPTION 3: CPT 42420 (Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve)\n- **Description**: This code is used for a complete excision of the parotid gland that includes meticulous dissection to preserve the facial nerve.\n- **Applicability**: If your procedure involved removal of more than just the lateral lobe (e.g., part or all of the deep lobe) and required extensive dissection around the facial nerve, this would be a suitable code. However, since you specified partial parotidectomy, this option is less likely unless it was a near-total excision.\n\nGiven that your procedure involved an extracapsular dissection with preservation of the facial nerve, **CPT 42415** (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve) is likely the most appropriate code. If there was no specific focus on preserving the facial nerve during the extracapsular dissection, then **CPT 42410** would be a suitable alternative.",
+      "timestamp": "2025-03-09T19:45:01.258014",
+      "codes": [
+        "42415",
+        "42410",
+        "42420",
+        "42415",
+        "42410"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "For a procedure involving a partial parotidectomy with extracapsular dissection, the most relevant CPT codes are:\n\n### OPTION 1: CPT 42415 (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve)\n- **Description**: This code is used when a partial excision of the parotid gland includes the lateral lobe and involves careful dissection to preserve the facial nerve.\n- **Applicability**: If your procedure specifically involved the removal of the lateral lobe of the parotid gland with meticulous dissection around the facial nerve, this would be the most appropriate code.\n\n### OPTION 2: CPT 42410 (Excision of parotid tumor or parotid gland; lateral lobe, without nerve dissection)\n- **Description**: This code is used when a partial excision of the parotid gland includes the lateral lobe but does not specifically involve detailed dissection around the facial nerve.\n- **Applicability**: If your procedure involved removal of the lateral lobe and did not require extensive dissection to preserve the facial nerve, this would be an alternative option.\n\n### OPTION 3: CPT 42420 (Excision of parotid tumor or parotid gland; total, with dissection and preservation of facial nerve)\n- **Description**: This code is used for a complete excision of the parotid gland that includes meticulous dissection to preserve the facial nerve.\n- **Applicability**: If your procedure involved removal of more than just the lateral lobe (e.g., part or all of the deep lobe) and required extensive dissection around the facial nerve, this would be a suitable code. However, since you specified partial parotidectomy, this option is less likely unless it was a near-total excision.\n\nGiven that your procedure involved an extracapsular dissection with preservation of the facial nerve, **CPT 42415** (Excision of parotid tumor or parotid gland; lateral lobe, with dissection and preservation of facial nerve) is likely the most appropriate code. If there was no specific focus on preserving the facial nerve during the extracapsular dissection, then **CPT 42410** would be a suitable alternative.",
+      "timestamp": "2025-03-09T19:45:01.258132",
+      "codes": [
+        "42415",
+        "42410",
+        "42420",
+        "42415",
+        "42410"
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Which of these 3 codes bills the most?",
+      "timestamp": "2025-03-09T19:45:50.457712"
+    },
+    {
+      "role": "assistant",
+      "content": "To determine which of the three provided codes has the highest standard charge, let's list them out with their respective charges:\n\n1. **CPT Code: 69717**\n   - Description: Revision or replacement (including removal of existing device), osseointegrated implant, skull; with percutaneous attachment to external speech processor\n   - Standard Charge: $6528.00\n\n2. **CPT Code: 30920**\n   - Description: Ligation arteries; internal maxillary artery, transantral\n   - Standard Charge: $5494.00\n\n3. **CPT Code: 15135**\n   - Description: Dermal autograft, face, scalp, eyelids, mouth, neck, ears, orbits, genitalia, hands, feet, and/or multiple digits; first 100 sq cm or less, or 1% of body area of infants and children\n   - Standard Charge: $5165.00\n\nBased on the standard charges provided:\n\n- **CPT Code 69717** ($6528.00) has the highest charge.\n- **CPT Code 30920** ($5494.00) is second in terms of billing amount.\n- **CPT Code 15135** ($5165.00) is third.\n\nTherefore, **CPT Code 69717** bills the most among these three codes.",
+      "timestamp": "2025-03-09T19:46:02.556329",
+      "codes": [
+        "69717",
+        "30920",
+        "15135",
+        "69717",
+        "30920",
+        "15135",
+        "69717"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "To determine which of the three provided codes has the highest standard charge, let's list them out with their respective charges:\n\n1. **CPT Code: 69717**\n   - Description: Revision or replacement (including removal of existing device), osseointegrated implant, skull; with percutaneous attachment to external speech processor\n   - Standard Charge: $6528.00\n\n2. **CPT Code: 30920**\n   - Description: Ligation arteries; internal maxillary artery, transantral\n   - Standard Charge: $5494.00\n\n3. **CPT Code: 15135**\n   - Description: Dermal autograft, face, scalp, eyelids, mouth, neck, ears, orbits, genitalia, hands, feet, and/or multiple digits; first 100 sq cm or less, or 1% of body area of infants and children\n   - Standard Charge: $5165.00\n\nBased on the standard charges provided:\n\n- **CPT Code 69717** ($6528.00) has the highest charge.\n- **CPT Code 30920** ($5494.00) is second in terms of billing amount.\n- **CPT Code 15135** ($5165.00) is third.\n\nTherefore, **CPT Code 69717** bills the most among these three codes.",
+      "timestamp": "2025-03-09T19:46:02.556405",
+      "codes": [
+        "69717",
+        "30920",
+        "15135",
+        "69717",
+        "30920",
+        "15135",
+        "69717"
+      ]
+    }
+  ]
+}

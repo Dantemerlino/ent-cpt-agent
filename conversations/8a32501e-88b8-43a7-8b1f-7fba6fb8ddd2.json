@@ -1,0 +1,31 @@
+{
+  "session_id": "8a32501e-88b8-43a7-8b1f-7fba6fb8ddd2",
+  "metadata": {
+    "session_id": "8a32501e-88b8-43a7-8b1f-7fba6fb8ddd2",
+    "start_time": "2025-03-09T19:18:56.080129",
+    "total_messages": 4,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:19:05.272147"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: 'ENTCPTAgent' object has no attribute 'procedure_search'",
+      "timestamp": "2025-03-09T19:19:10.241240"
+    },
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:19:41.222766"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: 'ENTCPTAgent' object has no attribute 'procedure_search'",
+      "timestamp": "2025-03-09T19:19:44.300777"
+    }
+  ]
+}

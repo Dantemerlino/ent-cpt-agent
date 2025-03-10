@@ -1,6 +1,7 @@
 """
 Main module for the ENT CPT Code Agent.
 Contains the main functionality for the CLI application.
+file location: ent-cpt-agent/src/main.py
 """
 
 import argparse

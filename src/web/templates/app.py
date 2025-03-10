@@ -1,12 +1,14 @@
 """
 Flask application for the ENT CPT Code Agent Web UI.
 This file defines the Flask app and routes for interacting with the ENT CPT Agent.
+File name and location: ent-cpt-agent/src/web/templates/app.py
 """
 
 import os
 import json
 import logging
 import sys
+import pandas as pd
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 
@@ -195,10 +197,58 @@ def validate_code():
         data = request.json
         code = data.get('code')
         
+        logger.info(f"Validating CPT code: {code}")
+        
         if not code:
             return jsonify({"status": "error", "message": "No code provided"})
         
-        result = agent.cpt_db.get_code_validation(code)
+        # Check if cpt_db has get_code_validation method
+        if not hasattr(agent.cpt_db, 'get_code_validation'):
+            logger.error("CPT database does not have get_code_validation method")
+            
+            # Fallback to direct database lookup
+            try:
+                # If cpt_db is a DataFrame, check if code exists directly
+                if isinstance(agent.cpt_db, pd.DataFrame):
+                    code_match = agent.cpt_db[agent.cpt_db['CPT_code'].astype(str) == str(code)]
+                    
+                    if not code_match.empty:
+                        description = code_match.iloc[0]['description']
+                        key_indicator_raw = code_match.iloc[0].get('key_indicator', 'No')
+                        key_indicator = str(key_indicator_raw).strip().lower() in ("yes", "true", "1")
+                        standard_charge = code_match.iloc[0].get('standard_charge', 0.0)
+                        
+                        result = {
+                            "valid": True,
+                            "code": code,
+                            "description": description,
+                            "key_indicator": key_indicator,
+                            "standard_charge": float(standard_charge)
+                        }
+                    else:
+                        result = {
+                            "valid": False,
+                            "code": code,
+                            "error": f"Invalid CPT code: {code}"
+                        }
+                else:
+                    result = {
+                        "valid": False,
+                        "code": code,
+                        "error": "Database is not properly configured"
+                    }
+            except Exception as db_error:
+                logger.error(f"Error with fallback database lookup: {db_error}")
+                result = {
+                    "valid": False,
+                    "code": code,
+                    "error": f"Database error: {str(db_error)}"
+                }
+        else:
+            # Use the proper validation method
+            result = agent.cpt_db.get_code_validation(code)
+        
+        logger.info(f"Validation result for {code}: {result}")
         
         return jsonify({
             "status": "success" if result.get("valid", False) else "error",
@@ -276,14 +326,14 @@ def health_check():
             })
         
         # Check if database is loaded
-        if not hasattr(agent, 'cpt_db') or not agent.cpt_db:
+        if not hasattr(agent, 'cpt_db') or (hasattr(agent, 'cpt_db') and isinstance(agent.cpt_db, pd.DataFrame) and agent.cpt_db.empty):
             return jsonify({
                 "status": "warning",
                 "message": "CPT database not loaded"
             })
         
         # Check if model is initialized
-        if not hasattr(agent, 'model') or not agent.model:
+        if not hasattr(agent, 'client') or agent.client is None:
             return jsonify({
                 "status": "warning",
                 "message": "LM Studio model not initialized"

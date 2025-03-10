@@ -1,0 +1,60 @@
+        tools = [{
+            "type": "function",
+            "function": {
+                "name": "procedure_search",
+                "description": "Query the CPT code database to get the relevant information on CPT codes.",
+                "strict": True,
+                "parameters": {
+                    "type": "object",
+                    "required": [
+                        "query",
+                        "procedure_details"
+                    ],
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "The user question or search query."
+                        },
+                        "procedure_details": {
+                            "type": "object",
+                            "required": [
+                                "description",
+                                "CPT_code",
+                                "subspecialty",
+                                "category",
+                                "key_indicator",
+                                "standard_charge"
+                            ],
+                            "properties": {
+                                "description": {
+                                    "type": "string",
+                                    "description": "A brief summary of the procedure associated with the CPT code."
+                                },
+                                "CPT_code": {
+                                    "type": "string",
+                                    "description": "The numerical CPT code, provided as a string."
+                                },
+                                "subspecialty": {
+                                    "type": "string",
+                                    "description": "The surgical subspecialty division that most commonly performs the procedure of the CPT code."
+                                },
+                                "category": {
+                                    "type": "string",
+                                    "description": "The broad category of the procedure, used to identify related CPT codes."
+                                },
+                                "key_indicator": {
+                                    "type": "boolean",
+                                    "description": "A boolean value (Yes/No) indicating whether the procedure is a key indicator procedure."
+                                },
+                                "standard_charge": {
+                                    "type": "number",
+                                    "description": "The standard charge for the procedure, provided as a float."
+                                }
+                            },
+                            "additionalProperties": False
+                        }
+                    },
+                    "additionalProperties": False
+                }
+            }
+        }]

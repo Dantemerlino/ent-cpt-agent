@@ -1,0 +1,21 @@
+{
+  "session_id": "1bf2fc42-4af8-4867-bb72-07def7ff6372",
+  "metadata": {
+    "session_id": "1bf2fc42-4af8-4867-bb72-07def7ff6372",
+    "start_time": "2025-03-09T19:22:20.412569",
+    "total_messages": 2,
+    "total_codes_identified": 0
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T19:22:57.193449"
+    },
+    {
+      "role": "assistant",
+      "content": "Error: 'NoneType' object is not callable",
+      "timestamp": "2025-03-09T19:23:00.396749"
+    }
+  ]
+}

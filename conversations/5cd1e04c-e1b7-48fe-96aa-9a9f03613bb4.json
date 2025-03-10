@@ -1,0 +1,34 @@
+{
+  "session_id": "5cd1e04c-e1b7-48fe-96aa-9a9f03613bb4",
+  "metadata": {
+    "session_id": "5cd1e04c-e1b7-48fe-96aa-9a9f03613bb4",
+    "start_time": "2025-03-09T17:28:36.970696",
+    "total_messages": 3,
+    "total_codes_identified": 4
+  },
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is the appropriate code to use to log a partial parotidectomy in which you perform an extracapsular dissection?",
+      "timestamp": "2025-03-09T17:28:42.073285"
+    },
+    {
+      "role": "assistant",
+      "content": "It appears that there isn't a specific CPT code listed for logging a partial parotidectomy with an extracapsular dissection. However, we can consider the closest relevant codes:\n\n- Code: 40325 - Parotid gland excision (eg, pleomorphic adenoma), complete or subtotal; without facial nerve monitoring\n- Category: Surgery\n- Key Indicator: No\n- Standard Charge: $1800\n\nFor an extracapsular dissection specifically, you might need to document this separately in the procedure notes and possibly use additional codes for any associated procedures such as lymph node biopsy if applicable.\n\nIf the partial parotidectomy includes facial nerve monitoring or other specific nuances not covered by 40325, it would be best to consult with a coding specialist or refer to local guidelines for more precise guidance.",
+      "timestamp": "2025-03-09T17:28:50.996277",
+      "codes": [
+        "40325",
+        "40325"
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": "It appears that there isn't a specific CPT code listed for logging a partial parotidectomy with an extracapsular dissection. However, we can consider the closest relevant codes:\n\n- Code: 40325 - Parotid gland excision (eg, pleomorphic adenoma), complete or subtotal; without facial nerve monitoring\n- Category: Surgery\n- Key Indicator: No\n- Standard Charge: $1800\n\nFor an extracapsular dissection specifically, you might need to document this separately in the procedure notes and possibly use additional codes for any associated procedures such as lymph node biopsy if applicable.\n\nIf the partial parotidectomy includes facial nerve monitoring or other specific nuances not covered by 40325, it would be best to consult with a coding specialist or refer to local guidelines for more precise guidance.",
+      "timestamp": "2025-03-09T17:28:50.996600",
+      "codes": [
+        "40325",
+        "40325"
+      ]
+    }
+  ]
+}
