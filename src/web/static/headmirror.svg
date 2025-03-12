@@ -1,0 +1,45 @@
+<!-- Enhanced headmirror.svg with multiple reflection wedges and improved styling -->
+<svg version="1.1"
+     id="headmirror"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 512 512">
+  
+  <!-- Background radial gradient to add depth -->
+  <defs>
+    <radialGradient id="mirrorGradient" cx="256" cy="256" r="100" gradientUnits="userSpaceOnUse">
+      <stop offset="70%" stop-color="#111111" />
+      <stop offset="100%" stop-color="#333333" />
+    </radialGradient>
+    
+    <!-- Gradient for the band -->
+    <linearGradient id="bandGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#333333" />
+      <stop offset="50%" stop-color="#111111" />
+      <stop offset="100%" stop-color="#333333" />
+    </linearGradient>
+  </defs>
+
+  <!-- The horizontal band with rounded corners and gradient -->
+  <rect x="100" y="220" width="312" height="72" fill="url(#bandGradient)" rx="10" ry="10" 
+        stroke="#444444" stroke-width="1.5" />
+
+  <!-- The large circle (mirror) with gradient fill -->
+  <circle cx="256" cy="256" r="80" fill="url(#mirrorGradient)" 
+          stroke="#444444" stroke-width="1.5" />
+
+  <!-- A small white circle in the center -->
+  <circle cx="256" cy="256" r="16" fill="#F5F5F5" 
+          stroke="#DDDDDD" stroke-width="0.5" />
+
+  <!-- Primary reflection wedge (off-white) -->
+  <path d="M256 256 L256 176 A80 80 0 0 1 336 256 z" fill="#F0F0F0" opacity="0.85"/>
+  
+  <!-- Secondary smaller reflection wedge -->
+  <path d="M256 256 L256 196 A60 60 0 0 1 316 256 z" fill="#F8F8F8" opacity="0.7"/>
+  
+  <!-- Third even smaller reflection wedge -->
+  <path d="M256 256 L256 216 A40 40 0 0 1 296 256 z" fill="#FFFFFF" opacity="0.9"/>
+  
+  <!-- Small highlight dot in the upper right quadrant -->
+  <circle cx="296" cy="216" r="5" fill="#FFFFFF" opacity="0.9" />
+</svg>

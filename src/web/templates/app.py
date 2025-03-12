@@ -30,7 +30,8 @@ logger = logging.getLogger("ent_cpt_agent_web")
 
 # Initialize Flask app with correct template folder
 template_dir = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__, template_folder=template_dir)
+static_dir = os.path.join(os.path.dirname(template_dir), 'static')
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
 # Global variables for agent and configuration
 config = None
@@ -83,6 +84,18 @@ def ensure_agent_initialized():
     """Ensure the agent is initialized before handling any request."""
     if not agent_initialized and not request.endpoint == 'static':
         init_agent()
+
+@app.route('/favicon.ico')
+def favicon():
+    return app.send_static_file('favicon.ico')
+
+@app.route('/apple-touch-icon.png')
+def apple_touch_icon():
+    return app.send_static_file('apple-touch-icon.png')
+
+@app.route('/apple-touch-icon-precomposed.png')
+def apple_touch_icon_precomposed():
+    return app.send_static_file('apple-touch-icon-precomposed.png')
 
 @app.route('/')
 def index():

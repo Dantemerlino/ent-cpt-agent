@@ -1,4 +1,8 @@
 old_files/
+Old_code/
+conversations/
+data/
+.env
 venv/
 __pycache__/
 *.py[cod]
@@ -8,3 +12,4 @@ __pycache__/
 # Ignore logs and temporary files
 *.log
 *.tmp
+.venv/

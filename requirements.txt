@@ -12,4 +12,5 @@ logging
 openai
 sentence-transformers
 faiss-cpu
-
+flask-cors
+python-dotenv

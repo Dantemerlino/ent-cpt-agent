@@ -371,8 +371,26 @@ class ENTCPTAgent:
             # Get conversation history if available
             messages = []
             
-            # Step 1: Semantic search for CPT codes
-            top_matches = self.semantic_search(query, top_n=15)
+            # Step 1: Run the user's query through an LLM, asking the model to translate into specific ENT procedure terms
+            translate_prompt = (
+                f"Translate the following query into specific otolaryngology procedure terminology for CPT coding purposes. " 
+                f"Focus on exact procedure names, anatomical sites, and technical terms used in ENT CPT coding. " 
+                f"Be concise. Do not add any preamble or conclusion. Use standard medical terminology. " 
+                f"Query: {query}"
+            )
+            messages.append({"role": "user", "content": translate_prompt})
+            response1 = self._call_llm(messages)
+            
+            # Check if we got a valid response from the LLM
+            if not response1 or "Error:" in response1:
+                logger.warning(f"Failed to get a valid translation from LLM: {response1}")
+                logger.warning("Falling back to original query for semantic search")
+                response1 = query
+            
+            # Step 2: Semantic search for CPT codes based on the LLM output from Step 1
+            logger.info(f"Using enhanced query from LLM: {response1}")
+
+            top_matches = self.semantic_search(response1, top_n=15)
 
             # Format DB results into prompt
             db_prompt = "\n".join(
@@ -383,7 +401,7 @@ class ENTCPTAgent:
                 for code in top_matches
             )
             
-            # Enhanced system message with semantic search results
+            # Enhanced system message with semantic search results (based on the translated query)
             system_message = (
                 "You are the ENT CPT Code Agent, an AI specializing in ENT CPT coding. "
                 "Using the following relevant CPT codes identified by semantic search, "
@@ -455,7 +473,7 @@ class ENTCPTAgent:
                     {"role": "user", "content": query}
                 ]
             
-            # Make a simple LLM call without tools, with slightly higher temperature for diverse responses
+            # Make a simple LLM call without tools
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,

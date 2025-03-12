@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
 Script to run the web UI for ENT CPT Code Agent.
-This script starts the web interface server for the ENT CPT Code Agent.
+This script starts the web interface server for the ENT CPT Code Agent using a static ngrok domain.
 """
 
 import os
 import logging
+import subprocess
 from src.web.templates.app import app
-from pyngrok import ngrok  
+from dotenv import load_dotenv
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -24,10 +26,26 @@ if __name__ == "__main__":
         host = os.environ.get("WEB_HOST", "0.0.0.0")
         debug = os.environ.get("DEBUG", "False").lower() == "true"
         
+        # Static ngrok domain - load it from environment variable
+        static_domain = os.environ.get("STATIC_DOMAIN", None)
+        if static_domain is None:
+            logger.error("STATIC_DOMAIN environment variable not set.")
+            exit(1)        
         logger.info(f"Starting web UI server on {host}:{port} (debug={debug})")
-        # Open an ngrok tunnel for the Flask app
-        tunnel = ngrok.connect(port, "http")
-        logger.info(f"Ngrok tunnel established at {tunnel.public_url}")
+        
+        # Start ngrok in a separate process with static domain
+        logger.info(f"Starting ngrok tunnel with static domain: {static_domain}")
+        ngrok_cmd = f"ngrok http --domain={static_domain} {port}"
+        
+        # Start ngrok process in the background
+        ngrok_process = subprocess.Popen(
+            ngrok_cmd.split(), 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE
+        )
+        
+        logger.info(f"Ngrok tunnel established at https://{static_domain}")
+        
         # Start the Flask application
         app.run(host=host, port=port, debug=debug)
     except Exception as e:
